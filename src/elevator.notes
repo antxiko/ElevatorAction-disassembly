@@ -1,0 +1,4105 @@
+# Elevator Action (Taito, 1985) - anotaciones
+
+# ---------------------------------------------------------------- arranque y bucle principal
+D 0x4000 0x4010 cabecera          "AB", INIT 0x4010 y el resto a cero (sin STATEMENT, DEVICE ni TEXT)
+B 0x4010 =====  Arranque y bucle principal  =====
+L 0x4010 inicio                    INIT del cartucho: pila, RAM a cero y al titulo
+C 0x4010 sin interrupciones mientras se monta todo
+C 0x4011 la pila, justo debajo de las variables del sistema
+C 0x4019 la RAM del juego, 0xC000-0xEFFF...
+C 0x401C ...12 KB...
+C 0x401F ...a cero
+L 0x4023 al_titulo                 Titulo y demostracion hasta que se pulsa; luego partida nueva
+C 0x4023 el titulo (vuelve al pulsar)
+C 0x4029 partida nueva: ronda 1, vidas y marcador
+L 0x402C ronda_nueva               Monta el edificio de la ronda y deja al agente en la azotea
+C 0x402C pinta el edificio y baja al agente
+L 0x4031 vida_nueva                El agente vuelve a entrar tras perder una vida
+C 0x4034 los ascensores, sin el bit del agente
+C 0x4037 pantalla encendida, con interrupcion
+C 0x403D se juega
+L 0x4042 a_jugar                   Musica de fondo y bucle de un cuadro
+L 0x4047 bucle_juego               Un cuadro de partida: mueve todo y mira si se acaba la vida o la ronda
+C 0x405F el scroll del edificio
+C 0x4062 los sprites al buffer
+C 0x4065 la vida extra ya dada?
+C 0x406B la cifra de los 10.000 puntos...
+C 0x406E ...ya es un "1"?
+C 0x4072 una vida mas...
+C 0x4079 ...y no se vuelve a dar
+C 0x407C el agente sigue vivo?
+C 0x4081 no: se pierde la vida
+C 0x4084 ha llegado al sotano?
+C 0x4089 si: fin de ronda
+L 0x408D fin_de_ronda              El agente ha llegado al sotano: si esta muriendo, vida perdida; si no, a ras de suelo y comprueba las puertas rojas
+C 0x409B el agente
+C 0x409F muriendo?
+C 0x40A5 si: el ultimo cuadro de morir...
+C 0x40A9 ...pintada...
+C 0x40B2 ...una pausa...
+C 0x40B8 ...y cuenta como vida perdida
+L 0x40BB agente_a_ras              Baja al agente de 8 en 8 hasta que pisa
+C 0x40BB mira lo que pisa
+C 0x40C0 suelo?
+C 0x40C4 un paso de 8 pixeles
+C 0x40CE postura de pie
+C 0x40D9 queda alguna puerta roja?
+C 0x40DC no: ronda superada
+C 0x40E0 el ascensor del agente
+C 0x40E3 el sitio del ascensor en el mapa...
+C 0x40EA ...dos filas por debajo...
+C 0x40EF ...o catorce si es doble
+C 0x40FB un "?" que no da puntos: vuelta arriba
+L 0x4101 espera_texto              Espera a que el texto termine de salir
+C 0x410C la fila de la planta...
+C 0x410F ...dos por encima
+C 0x4111 nueva fila del scroll
+C 0x4114 x 32 = desplazamiento en el mapa
+C 0x4121 no se juega...
+C 0x4128 ...con la pantalla apagada
+C 0x412E se vuelve a montar desde ahi
+L 0x4131 ronda_superada            Bonus de fin de ronda (1000 por ronda, hasta 9000) y siguiente edificio
+C 0x4134 el texto "BONUS 1000"..., con el tile del espacio
+C 0x4137 ...a la RAM, para cambiar la cifra
+C 0x413F la ronda...
+C 0x4142 ...cuenta hasta la 9
+C 0x4152 el texto, en el mapa del edificio
+L 0x4160 espera_bonus              Espera a que acabe de salir el texto
+C 0x416B ronda - 1 veces...
+C 0x416E ...1000 puntos
+C 0x4176 pausa de 100 cuadros
+C 0x4183 borde negro
+C 0x4189 el scroll arriba del todo...
+C 0x418F ...fila 6
+C 0x4194 ronda + 1
+L 0x419B vida_perdida              Muerte del agente: quita una vida y retoma unas plantas mas arriba
+C 0x419E pausa de 64 cuadros
+C 0x41A5 no se juega
+C 0x41AB pantalla apagada...
+C 0x41B1 ...borde negro
+C 0x41B7 le quedan vidas?
+C 0x41BB no: fin de partida
+C 0x41C1 venia de la parte de abajo?
+C 0x41CA si: seis filas mas
+L 0x41CC vuelve_arriba             Redondea la fila del scroll a un multiplo de 6 (el alto de una planta)
+L 0x41D4 resta_6
+L 0x41DB fila_de_planta
+C 0x41E7 no puede ser la fila 0...
+C 0x41E9 ...como minimo la 6
+C 0x41EE ni pasar de la 156
+L 0x41F7 por_32                    Fila x 32
+L 0x41FB monta_tras_vida           El edificio desde esa fila: la pantalla se vuelve a dibujar entera
+C 0x41FB desplazamiento del scroll
+C 0x41FE vuelca el mapa entero en el proximo cuadro
+C 0x4204 fuera enemigos y balas
+C 0x4207 sprites a cero
+C 0x420A colores de los sprites
+C 0x4213 pausa de 800 cuadros, la ronda en pantalla
+C 0x4219 borde azul
+L 0x4222 fin_de_partida            GAME OVER, record y vuelta al titulo
+C 0x4225 bit 1: fin de partida
+C 0x422A borde negro
+C 0x4230 la pantalla de letras en blanco
+C 0x4233 escribe "GAME OVER"
+C 0x4242 ...y el sonido 0x0C, el del fin de partida
+C 0x424C cuatro mil cuadros...
+C 0x4256 el record: si los puntos pasan...
+C 0x425C ...se copian
+D 0x4262 0x4270 txt_game_over     "GAME OVER" en la fila 9: posicion (0x014B), longitud y letras; 0x80 cierra
+
+# ---------------------------------------------------------------- la ronda
+L 0x4270 monta_ronda               Prepara el edificio de la ronda y baja al agente por la azotea
+C 0x427C el ascensor 0 (el de la azotea)...
+C 0x4288 ...es el del agente
+C 0x428C vuelca el mapa en el proximo cuadro
+C 0x4292 pantalla encendida
+C 0x4298 se juega
+C 0x429D en la ronda 1...
+C 0x42A2 ...la entrada por el cable
+C 0x42A8 pausa de 500 cuadros
+C 0x42AE el agente...
+C 0x42B2 ...cuatro pasos
+L 0x42B7 baja_azotea               El scroll baja planta a planta hasta la fila 6
+C 0x42B7 un paso cada 300 cuadros
+C 0x42BD ya en la fila 6?
+C 0x42C4 si no, el scroll baja
+L 0x42CE entra_azotea              El agente salta de la azotea al ascensor
+C 0x42D2 el agente de espaldas
+C 0x42D6 lo pinta
+C 0x42D9 cuatro pasos mas
+C 0x42DE de frente
+C 0x42E5 de pie
+C 0x42ED el ascensor de la azotea...
+C 0x42F1 ...en la planta 6...
+C 0x42F5 ...que es tambien su destino
+L 0x4301 suelta_ascensores         Quita a los 11 ascensores los bits de ocupado
+C 0x430A deja los bits 0, 2, 5 y 6
+L 0x4317 busca_ascensor_agente     IX = el ascensor con el bit 5 (el que lleva al agente)
+L 0x432B agente_anda_n             El agente da B pasos de andar (dos posturas alternas)
+C 0x432B andando
+C 0x4330 postura 1-2-1-2...
+C 0x4340 pintado
+C 0x4349 pausa de 96 cuadros
+L 0x4353 baja_al_sotano            El ascensor del agente baja fila a fila con el dentro hasta la Y 0xA8
+C 0x4353 los dibujos de siempre del agente
+C 0x4359 el ascensor del agente...
+C 0x435D ...baja (bit 0 = 0)
+L 0x4361 baja_sotano_paso
+C 0x4370 la Y del agente...
+C 0x4373 ...8 mas
+C 0x437B en el buffer de sprites
+C 0x4385 hasta la Y 0xA8
+L 0x438E quedan_documentos         NZ si alguna puerta roja sigue cerrada (58 puertas, bit 6)
+C 0x438E la tabla de puertas
+C 0x4392 58 puertas de 5 bytes
+D 0x43A8 0x43BF txt_bonus         "BONUS;1000" (en 0xC343 se cambia la cifra) y el "?" del final
+
+# ---------------------------------------------------------------- el scroll del edificio
+B 0x43BF =====  El scroll: el edificio baja o sube de fila en fila  =====
+L 0x43BF scroll_cuadro             Si toca (bits 5 y 6 de 0xC0D0) mueve el edificio una fila
+C 0x43BF los bits del scroll
+C 0x43C2 bit 5: mover la fila del agente
+C 0x43CD bit 6: el scroll de la entrada
+C 0x43D3 una fila
+C 0x43D8 el agente...
+C 0x43DB ...en la escalera?
+C 0x43DF su ascensor...
+C 0x43E3 ...tambien se mueve
+L 0x43EB scroll_vuelca             Pide volcar el mapa en el proximo cuadro
+C 0x43EB bit 7: volcar
+L 0x43F0 scroll_con_agente         El scroll sigue al agente: 8 pixeles arriba o abajo
+C 0x43F1 bit 1: hacia arriba
+C 0x43F5 bit 0 = 0: sube
+C 0x43F7 el agente, 8 mas arriba en pantalla
+C 0x43FB bit 0 = 1: baja
+C 0x43FD el agente, 8 mas abajo
+C 0x43FF mueve el edificio
+C 0x4402 se ha podido?
+C 0x4404 no: el agente no se mueve
+C 0x4406 la Y del agente
+L 0x440F scroll_una_fila           Mueve el edificio una fila (bit 0 de 0xC0D0: 0 baja la vista, 1 la sube); NZ si no se pudo
+C 0x4411 Z por defecto
+C 0x4412 sin volcar todavia
+C 0x4414 que direccion?
+L 0x4418 scroll_sube               La vista sube una fila: el desplazamiento baja 32
+C 0x4421 ya arriba del todo: nada
+C 0x4427 fila - 1
+C 0x442B los objetos bajan 8 pixeles
+L 0x4434 scroll_baja               La vista baja una fila; en la fila 0xB6 (el sotano) se para
+C 0x4441 fila + 1
+C 0x4442 la ultima fila es la 0xB6
+C 0x4445 pasada: se deshace
+C 0x4447 no es la ultima: los objetos suben
+C 0x4449 en la ultima: algun ascensor...
+C 0x444B ...con el agente...
+C 0x4453 ...y en el sotano (bits 5 y 7)?
+C 0x445D ninguno: no se baja
+L 0x4462 scroll_sotano             El ascensor del agente llega al sotano: fin de ronda en camino
+C 0x4464 bit 0 de 0xC080: el agente esta en el sotano
+C 0x4469 desplazamiento ya en 0x1680 (fila 0xB4)?
+C 0x4474 si no, se fija ahi...
+C 0x447A ...y el agente baja 8
+L 0x4484 scroll_objetos_suben
+C 0x4484 todo sube 8 pixeles
+L 0x448E mueve_objetos_y           Suma C a la Y de enemigos, balas y objetos al mover el edificio
+C 0x448E los 4 enemigos
+C 0x449A las 3 balas del agente
+C 0x44A6 las 4 balas enemigas
+C 0x44B2 hay algo mas en pantalla (la luz que cae)?
+C 0x44B7 su Y en los sprites 25 y 26
+L 0x44C2 suma_y_tabla              Suma C a la Y (IX+2) de B fichas de 10 bytes que esten activas
+C 0x44C2 activa?
+L 0x44C8 suma_y_sig
+
+# ---------------------------------------------------------------- los sprites al buffer
+L 0x44D4 sprites_al_buffer         Pasa el agente, enemigos y balas al buffer de atributos de 0xC000
+C 0x44D4 el agente
+C 0x44D8 su sitio en el buffer
+C 0x44DC esta en juego?
+C 0x44E3 en la escalera?
+C 0x44E9 tres sprites
+C 0x44EE los 4 enemigos...
+C 0x44F2 ...desde el sprite 3
+C 0x44F9 dos sprites cada uno
+C 0x44FB activo?
+C 0x4501 los pone
+C 0x4504 en pantalla: sigue
+C 0x4506 fuera: su puerta...
+C 0x450C ...si salio de una...
+C 0x4512 ...queda libre
+C 0x4514 y si iba en ascensor...
+C 0x451A ...el ascensor tambien
+L 0x451E sprites_ocultos           Esconde B sprites (Y = 0xD1)
+L 0x4523 sprites_enemigo_sig
+C 0x452B las 3 balas del agente, desde el sprite 11
+C 0x4543 inactiva: escondida
+C 0x454E las 4 balas enemigas, desde el sprite 14
+L 0x4535 sprites_bala_agente
+L 0x4558 sprites_bala_enemiga
+
+# ---------------------------------------------------------------- el VDP
+B 0x4572 =====  El VDP: modo y tablas  =====
+L 0x4572 vdp_modo_juego            GRAPHIC 1 (SCREEN 1) con las tablas propias: nombres 0x1000, colores 0x3FC0, sprites 0x3F00/0x2000
+C 0x4572 los 8 registros de 0x4856
+C 0x4578 y lo mismo en las variables del sistema: nombres
+C 0x457E colores
+C 0x4584 patrones
+C 0x458A atributos de sprites
+C 0x4590 dibujos de sprites
+C 0x4596 sprites a cero
+L 0x459A quita_objetos             Desactiva enemigos (liberando su puerta) y balas
+C 0x459A los 4 enemigos
+C 0x45A3 activo?
+C 0x45A9 fuera
+C 0x45AD salio de una puerta?
+C 0x45B3 la puerta...
+C 0x45B9 ...libre
+C 0x45BF las 3 balas del agente
+C 0x45D6 las 4 balas enemigas
+L 0x45EE sprites_a_cero            Vacia el buffer de atributos y la tabla de la VRAM
+C 0x45EE los 128 bytes del buffer
+C 0x45F8 la tabla 0 de 0x4892: los atributos en la VRAM
+L 0x45FD partida_nueva             Ronda 1, 3 vidas, puntos a cero y el record inicial (10000) si no hay otro
+C 0x45FD pantalla apagada
+C 0x4604 nada en curso
+C 0x460B ronda 1
+C 0x4610 dos vidas de reserva
+C 0x4615 hay record?
+C 0x461B no: siete "0"...
+C 0x4625 ...y el record de fabrica, "0010000"
+C 0x4630 la cuenta de 0xC0D4 a cero
+C 0x4634 los colores de la ronda 1
+C 0x4640 los puntos: siete "0"
+C 0x464A sin fin de partida
+D 0x4650 0x4657 record_inicial    El record de fabrica: "0010000"
+
+# ---------------------------------------------------------------- graficos del edificio
+L 0x4657 espejo_bytes              Da la vuelta a DE bytes de HL (bit 7 <-> bit 0): el dibujo mirando al otro lado
+C 0x465B saca el bit alto...
+C 0x465D ...y lo mete por arriba de C
+L 0x466B espejo_sprites            Cambia de sitio las dos mitades de B sprites de 16x16 (izquierda <-> derecha)
+C 0x466C la mitad derecha...
+C 0x466F ...a la izquierda
+C 0x4676 la izquierda...
+C 0x4679 ...a la derecha
+L 0x4680 copia_mitades             B veces: 16 bytes de HL a DE, saltando 16
+L 0x4691 monta_edificio            Descomprime los graficos de la ronda, limpia el mapa y lo dibuja
+C 0x4692 pantalla apagada
+C 0x4695 variables de la ronda a cero
+C 0x469B sprites a cero
+C 0x469E el mapa del edificio, 0xC400-0xDFFF, a cero
+C 0x46A8 los patrones del edificio...
+C 0x46B1 ...a la VRAM 0x0000
+C 0x46BD los sprites del agente...
+C 0x46C6 ...a 0x2000 mirando a la derecha...
+C 0x46D2 ...y dados la vuelta...
+C 0x46DB ...22 sprites...
+C 0x46E0 ...a 0x2800, mirando a la izquierda
+C 0x46EC los de los enemigos...
+C 0x46F5 ...a 0x22C0...
+C 0x4701 ...y a 0x2AC0
+C 0x470D dados la vuelta...
+C 0x4716 ...14 sprites...
+C 0x471B ...a 0x2480 y 0x2C80
+C 0x4733 los del resto (balas, coche, luz)...
+C 0x473C ...a 0x2640...
+C 0x4748 ...y a 0x2E40
+C 0x4754 el mapa de nombres a cero (tabla 2 de 0x4892)
+C 0x4759 borde azul
+C 0x475F los colores de los sprites
+C 0x4765 la pantalla en blanco
+C 0x476C los bits del scroll a cero
+C 0x4775 se vuelca
+C 0x4780 la ronda...
+C 0x4784 ...de la 3 en adelante...
+C 0x4788 ...un solo piso de dificultad
+L 0x478C dificultad_ronda          Ronda 1: 3, ronda 2: 2 (cuantos cuadros espera cada enemigo)
+L 0x4790 guarda_dificultad
+C 0x4790 la dificultad
+C 0x4793 el marcador fijo
+L 0x4798 colores_ronda             Los colores de los patrones cambian cada ronda: tres juegos que se repiten
+L 0x47A3 colores_1
+L 0x47A8 colores_2
+L 0x47AD colores_3
+L 0x47B0 pon_colores
+C 0x47B0 se guardan para el parpadeo de las luces
+C 0x47B3 a la tabla de colores
+L 0x47BD ronda_mod_100             La ronda en pantalla, de 0 a 99
+C 0x47C5 a dos cifras
+C 0x47C8 las cifras...
+C 0x47CB ...junto a "ROUND"
+C 0x47D4 "ROUND"
+D 0x47E1 0x47E6 txt_round         "ROUND"
+L 0x47E6 marcador_fijo             "PLAYER" y "HI SCORE" con sus cifras, en la fila de arriba
+C 0x47E6 los rotulos
+C 0x47EC el record...
+C 0x47EF ...a letras
+C 0x47F2 a la VRAM
+C 0x47FE los puntos
+D 0x4811 0x4828 txt_marcador      "PLAYER    HI SCORE" en la fila 0 (0x1012); ';' es el espacio y '@' tambien
+L 0x4828 pantalla_en_blanco        Llena los 768 nombres de 0x1000 con el patron 0x3B (vacio)
+L 0x4834 ram_ronda_a_cero          Borra las variables de 0xC0D6 a 0xC3A2
+L 0x4847 vdp_ocho_registros        Escribe los 8 registros del VDP de la tabla HL
+D 0x4856 0x485E vdp_registros     Registros 0-7: GRAPHIC 1, 16x16, nombres 0x1000, colores 0x3FC0, patrones 0, atributos 0x3F00, sprites 0x2000, borde 1
+L 0x485E escribe_textos            Lista de textos: posicion (2 bytes, +0x1000), longitud y letras; acaba con bit 7 en la posicion
+C 0x485E la posicion
+C 0x4862 bit 7: se acabo
+C 0x4866 en la tabla de nombres
+C 0x486C la longitud
+C 0x4872 a la VRAM
+L 0x487A vdp_rellena_tabla         Pone a cero la zona A de la tabla 0x4892 (longitud y direccion)
+C 0x487D 4 bytes por zona
+D 0x4892 0x48A6 vdp_zonas         Zonas de la VRAM (longitud, direccion): atributos 0x3F00, patrones, nombres 0x1000, sprites, colores
+B 0x48A6 =====  Utilidades  =====
+L 0x48A6 escribe_vdp               Registro C del VDP = B, guardando la copia del sistema (el 0 conserva los bits de modo)
+C 0x48A6 registro 0?
+C 0x48AA conserva los bits de arriba
+C 0x48B6 registro 1?
+C 0x48BA su copia
+C 0x48BE WRTVDP
+L 0x48C2 rellena_b                 B bytes de A desde HL
+L 0x48C7 rellena_bc                BC bytes de A desde HL
+L 0x48CF lee_mando                 A=0xFF: direccion (cursores o joystick 1); A<5: GTTRIG; mas: la tecla A de la tabla 0x4917
+C 0x48D6 direccion?
+C 0x48DA disparo?
+C 0x48DE GTTRIG
+C 0x48E3 una tecla
+C 0x48E8 los cursores
+C 0x48EF y si no, el joystick 1
+L 0x48FD lee_tecla                 Busca A en la tabla de teclas: fila de la matriz y bit; NZ si esta pulsada
+C 0x4903 fin de tabla?
+C 0x4910 SNSMAT
+C 0x4913 pulsada = 1
+D 0x4917 0x491E teclas            Dos teclas: 'x' (fila 5, bit 5) y 'z' (fila 5, bit 7); cero acaba
+
+# ---------------------------------------------------------------- el titulo
+B 0x491E =====  El titulo  =====
+L 0x491E titulo                    Titulo animado en SCREEN 2 hasta que se pulsa el disparo
+C 0x491E pantalla apagada
+C 0x4927 las tablas de SCREEN 2: nombres 0x3800...
+C 0x492D ...colores 0x2000...
+C 0x4933 ...patrones 0...
+C 0x4939 ...atributos 0x3B00...
+C 0x493F ...sprites 0x1800
+C 0x4945 la interrupcion del titulo...
+C 0x494A ...en H.TIMI
+C 0x4950 SETGRP
+C 0x4953 INIGRP
+C 0x495C borde blanco
+C 0x4962 las variables a cero
+C 0x496C la VRAM de patrones...
+C 0x4972 (sin parpadeo)
+C 0x4975 ...a cero
+C 0x4978 los patrones del titulo...
+C 0x497E ...descomprimidos
+C 0x4981 a los tres tercios
+C 0x4993 los colores
+C 0x499C a los tres tercios
+C 0x49AE los sprites del titulo
+C 0x49BA las 8 letras en su primera postura
+C 0x49C5 "(C) TAITO 1985"...
+C 0x49C8 ...en el mapa
+C 0x49D0 bit 0: el titulo en marcha
+C 0x49D5 cada 5 cuadros
+C 0x49D9 las posiciones de las 8 letras
+C 0x49E2 cuanto espera cada letra
+C 0x49F3 pantalla encendida
+L 0x49F9 titulo_cuadro             Un paso de la animacion de las letras de ELEVATOR ACTION
+L 0x49FC espera_titulo
+C 0x4A00 las direcciones de los dibujos de las letras
+C 0x4A09 limpia el mapa...
+C 0x4A13 ...y la zona de montaje
+C 0x4A1D alterna la mitad del dibujo
+C 0x4A25 las 8 letras
+L 0x4A27 titulo_letra
+C 0x4A2C las pares bajan...
+C 0x4A33 ...las impares suben
+C 0x4A3A le queda espera?
+C 0x4A42 una menos
+C 0x4A46 la postura...
+C 0x4A4D ...hasta la 5
+C 0x4A51 la ultima
+C 0x4A59 la letra 1 manda...
+C 0x4A5E ...cuando llega, se acaba la animacion
+L 0x4A66 titulo_espera_sig          La espera de la postura siguiente
+L 0x4A77 titulo_mueve
+C 0x4A79 la postura...
+C 0x4A81 ...y la mitad
+L 0x4A88 titulo_avance
+C 0x4A96 hacia atras?
+L 0x4A9B titulo_pon_letra
+C 0x4AA0 la letra al montaje
+C 0x4AAD el montaje...
+C 0x4AB0 ...al mapa
+C 0x4AB8 a la VRAM en el proximo cuadro
+C 0x4ABD acabada la animacion?
+L 0x4AC2 titulo_rotulo             Las letras ya en su sitio: escribe los rotulos de abajo uno a uno
+C 0x4AC2 fuera lo que habia en la pila
+C 0x4ACA la zona de los rotulos a cero
+L 0x4AD3 titulo_rotulo_sig
+C 0x4ADE el rotulo siguiente
+C 0x4AE4 la tabla de rotulos
+C 0x4AEC alto
+C 0x4AEE ancho
+C 0x4AF0 posicion
+C 0x4AFC de donde
+C 0x4B01 a la zona
+C 0x4B04 ya van los 6?
+C 0x4B0E no: a la VRAM y el siguiente
+L 0x4B12 titulo_espera_tecla       Parpadea "PUSH SPACE KEY" hasta que se pulsa el disparo
+C 0x4B12 bit 6 + bits 3 y 4
+L 0x4B14 titulo_vuelca
+C 0x4B18 bit 2: parpadeo
+L 0x4B1E titulo_lee_disparo
+C 0x4B1F la barra?
+C 0x4B24 el boton del joystick 1?
+C 0x4B2B cada cuadro de parpadeo
+C 0x4B33 borra el rotulo
+C 0x4B41 alterna
+C 0x4B47 o lo escribe
+L 0x4B52 titulo_parpadeo
+L 0x4B59 titulo_fin                Pide a la interrupcion que deje el titulo y espera a que lo haga
+C 0x4B5C bit 1: acabar
+C 0x4B5E la interrupcion lo pone a cero
+L 0x4B67 titulo_letra_dibujo       Copia un trozo de 2x4 de la letra a la zona de montaje
+L 0x4B77 copia_bloque              A filas de BC bytes de HL a DE (filas de 32)
+L 0x4B87 a_vram_2k                 Los 2 KB de 0xE000 a la VRAM DE
+D 0x4B91 0x4BA1 titulo_posiciones  Posicion inicial de las 8 letras
+D 0x4BA1 0x4BB1 titulo_dibujos     Donde estan los dibujos de cada letra
+D 0x4BB1 0x4BD1 titulo_esperas     Las esperas de cada letra, cuatro por letra
+D 0x4BD1 0x4BE1 titulo_pasos       Lo que avanza cada letra en cada postura (pares e impares)
+D 0x4BE1 0x4BED titulo_rotulos     Los 6 rotulos de abajo
+D 0x4BED 0x4C0B titulo_rotulos_d   Alto, ancho, posicion y origen de cada rotulo
+
+# ---------------------------------------------------------------- las interrupciones
+B 0x4C0B =====  Codigo que nada alcanza (ver la cabecera de datos)  =====
+D 0x4C0B 0x4C26 sin_uso_texto_lento  CODIGO SIN USO: escribe C letras de HL en DE de una en una con una espera entre ellas. Nada salta a 0x4C0B: en todo el cartucho no hay saltos indirectos (ni jp (hl) ni direcciones en la pila) y ningun call ni jp lleva esa direccion
+B 0x4C26 =====  La interrupcion de la partida  =====
+L 0x4C26 int_partida               Gancho de H.TIMI en partida: en cuadros alternos vuelca el mapa y mueve lo que va a 30 por segundo; siempre los temporizadores
+C 0x4C27 se esta jugando?
+C 0x4C2D pantalla sin interrupcion del VDP mientras dura
+C 0x4C33 cuadro par o impar
+C 0x4C3E uno de cada dos se salta
+L 0x4C44 int_partida_trabajo
+C 0x4C47 el mapa a la VRAM si toca
+L 0x4C50 int_partida_reloj         Pantalla con interrupcion otra vez; el reloj de la ronda
+C 0x4C56 pasado el reloj de la ronda?
+C 0x4C5C cuadros...
+C 0x4C62 ...de 256 en 256
+C 0x4C64 a los 0x38 x 256 cuadros (unos 4 minutos)...
+C 0x4C69 ...se marca: los enemigos se portan como en la ronda 6
+L 0x4C6C int_temporizadores
+C 0x4C6D los 50 temporizadores
+L 0x4C76 vuelca_mapa               Si lo pide el bit 7 de 0xC0D0: 21 filas del mapa desde el scroll a la VRAM (fila 2 en adelante)
+C 0x4C81 el desplazamiento del scroll
+C 0x4C84 dentro del mapa
+C 0x4C88 debajo de las dos filas del marcador
+C 0x4C8B 21 filas de 32
+B 0x4C92 =====  La interrupcion del titulo  =====
+L 0x4C92 int_titulo                Gancho de H.TIMI en el titulo: vuelca el mapa, cuenta los cuadros y los rotulos
+C 0x4C92 los bits del titulo
+C 0x4C95 bit 2: parpadeo de "PUSH SPACE KEY"
+C 0x4C9A bit 4: ya con los rotulos
+C 0x4C9E bit 6: volcar el mapa
+C 0x4CA5 el mapa entero a 0x3800
+L 0x4CB2 int_titulo_letras
+C 0x4CB2 bit 5: animacion acabada
+C 0x4CB6 cada 5 cuadros...
+C 0x4CBC ...un paso de las letras (bit 7)
+L 0x4CBF int_titulo_a_rotulos
+L 0x4CC7 int_titulo_rotulos
+C 0x4CC8 cada 15 cuadros...
+C 0x4CCE ...un rotulo
+L 0x4CD1 int_titulo_vuelca_rotulo
+C 0x4CD9 las 8 filas de abajo a 0x3960
+C 0x4CE9 el rotulo 5...
+C 0x4CEE ...trae dos sprites mas
+L 0x4CFA int_titulo_sprites
+C 0x4CFB bit 3: los sprites del titulo
+C 0x4D01 siete sprites a 0x3B00
+L 0x4D0E int_titulo_parpadeo       "PUSH SPACE KEY" cada 30 cuadros; con el bit 1 se pasa a la interrupcion de la partida
+C 0x4D0E bit 1: fin del titulo
+C 0x4D12 todo a cero
+C 0x4D14 el otro gancho
+L 0x4D20 int_titulo_rotulo_pulsa
+C 0x4D27 la fila de "PUSH SPACE KEY"
+L 0x4D34 int_titulo_cuenta
+C 0x4D37 30 cuadros
+D 0x4D3D 0x4D51 titulo_sprites    Siete sprites del titulo (Y, X, dibujo, color)
+D 0x4D51 0x4D59 titulo_sprites_5  Los dos sprites que trae el rotulo 5
+B 0x4D59 =====  El slot de la pagina 2  =====
+L 0x4D59 busca_pagina_2            Busca en los slots la segunda mitad del cartucho (0x8000) y la conecta con ENASLT
+C 0x4D59 EXPTBL: slots expandidos
+C 0x4D62 los dos primeros bytes de 0x4000 de ese slot...
+C 0x4D69 ...son "AB"?
+C 0x4D70 y los de 0x4010...
+C 0x4D73 ...son los de este INIT?
+C 0x4D79 y los de 0x4012...
+C 0x4D7F ...son "F3 31" (di / ld sp)?
+C 0x4D83 es el cartucho
+L 0x4D85 busca_sig_slot
+C 0x4D87 slot no expandido: siguiente
+C 0x4D8A subslot siguiente
+L 0x4D94 busca_sig_primario
+L 0x4D9E conecta_pagina_2
+C 0x4D9F lo apunta
+C 0x4DA2 ENASLT en 0x8000
+L 0x4DAA lee_dos_slot              DE = dos bytes de HL en el slot C (con RDSLT)
+L 0x4DAE lee_uno_slot
+C 0x4DB1 RDSLT
+B 0x4DB9 =====  Los temporizadores  =====
+L 0x4DB9 temporizadores_a_cero     Los 50 temporizadores de 0xC09E a cero
+L 0x4DC3 temporizadores_cuadro     En cada interrupcion, cada temporizador que no este a cero baja 1
+L 0x4DCF temporizador_sig
+L 0x4DD5 pon_temporizador          Temporizador A = B cuadros
+L 0x4DE2 lee_temporizador          NZ si el temporizador A sigue corriendo
+L 0x4DF0 divide                    H / L: D = cociente, A = resto (L = 0: nada)
+L 0x4DFF divide_sig
+L 0x4E02 divide_resta
+D 0x4E06 0x4E41 sin_uso_aritmetica  CODIGO SIN USO: una division y una multiplicacion de 16 bits (0x4E06, 0x4E21, 0x4E29). Nada las llama: el unico "cd 21 4e" del cartucho esta dentro de otra instruccion (0x534F)
+L 0x4E41 azar                      Numero al azar de 1 a B, con el registro R y la semilla de 0xC3A3
+C 0x4E43 la semilla
+C 0x4E47 el refresco del Z80
+L 0x4E56 azar_bit
+L 0x4E5A azar_uno
+L 0x4E5E azar_cero
+L 0x4E60 azar_guarda
+L 0x4E63 azar_modulo
+L 0x4E69 azar_fin
+L 0x4E6C espera                    Espera de bucle: HL x 100 vueltas (no cuenta cuadros)
+L 0x4E6D espera_100
+L 0x4E70 espera_vuelta
+L 0x4E7C agente_entra              El agente en juego, de pie en la X 0x64 e Y 0x78, y los 8 bytes de 0x4EAF a 0xC078
+C 0x4E84 bit 0: en juego
+C 0x4E88 X
+C 0x4E8C Y
+C 0x4E90 de pie
+C 0x4E9A los dibujos del agente
+C 0x4EA0 al buffer
+D 0x4EAF 0x4EB7 sprites_fijos     Dos sprites fijos (Y, X, dibujo, color) que van a 0xC078
+
+# ---------------------------------------------------------------- el agente
+# Ficha del agente en 0xC0D8 (10 bytes): +0 bits (0 en juego, 1 en un ascensor, 2 en la escalera mecanica, 3 en una puerta,
+# 4 saltando, 5 encima del techo del ascensor, 6 cayendo o muriendo, 7 mirando a la izquierda), +1 X, +2 Y,
+# +3 postura (1 de pie, 2 andando, 4 agachado, 8 en el aire, 0x10 entrando en una puerta, 0x20/0x40/0x80 las de morir),
+# +4 cuadro de la postura, +5/+6 (0xC0DD) los dibujos, +7/+8 el ascensor o la puerta, +9 avance del salto.
+# Tiles del mapa que mira: 0x60 suelo, 0x2D hueco del ascensor, 0x28 su cable, 0x3B el hueco de dentro de la
+# cabina, 0x61/0x64 las paredes de los lados, 0x0E/0x0A/0x09/0x2E el tejado.
+B 0x4EB7 =====  El agente  =====
+L 0x4EB7 agente_cuadro             Un cuadro del agente: lee el mando y lo mueve segun la postura
+C 0x4EB8 sin disparo en este cuadro
+C 0x4EBD la ficha del agente
+C 0x4EC1 sus sprites en el buffer
+C 0x4EC5 en juego?
+C 0x4ECC el temporizador 0...
+C 0x4ECE ...aun corriendo: este cuadro no se mueve
+C 0x4ED4 el siguiente movimiento dentro de 7 cuadros
+C 0x4EDE bit 6: muriendo
+C 0x4EE2 bit 2: en la escalera mecanica
+C 0x4EE7 bit 3: en una puerta
+C 0x4EEC bit 4: saltando
+C 0x4EF1 arriba o abajo en una escalera mecanica?
+C 0x4EF6 el mando
+L 0x4EF9 agente_muere              Las tres maneras de morir: cada una con su cuenta de cuadros
+C 0x4EF9 un paso cada 14 cuadros
+C 0x4F03 0x40: cae
+C 0x4F07 0x80: tiroteado
+C 0x4F0B 0x20: aplastado
+L 0x4F12 agente_cae                Cae 16 pixeles por paso hasta que hay suelo
+C 0x4F15 cinco pasos
+C 0x4F21 que hay debajo?
+C 0x4F24 0 o 1: suelo...
+C 0x4F28 ...se para
+C 0x4F2F nada: 16 mas abajo
+L 0x4F3A agente_tiroteado          Ocho cuadros de caida tras el disparo
+L 0x4F48 agente_aplastado          El ascensor lo aplasta: cuatro cuadros
+C 0x4F4B la primera vez...
+C 0x4F4D ...postura 0x20 desde el cuadro 1
+C 0x4F55 en el suelo del ascensor?
+L 0x4F5C agente_aplastado_sig
+L 0x4F5F agente_aplastado_cuadro
+C 0x4F6D en un ascensor...
+C 0x4F73 ...baja 8 con el
+C 0x4F7B el ascensor que le cayo encima...
+C 0x4F86 ...se para
+L 0x4F8E agente_fuera              Fin de la muerte: deja libres el ascensor y su techo
+C 0x4F8E fuera de juego: el bucle lo vera
+C 0x4F98 estaba en un ascensor?
+C 0x4F9E ya no lleva a nadie
+C 0x4FA0 encima del techo?
+C 0x4FA7 el techo libre
+L 0x4FAC agente_salta              El salto: cuatro cuadros, sube 16 en los dos primeros; en el aire se puede girar
+C 0x4FAF cuadro siguiente
+C 0x4FB2 acabado...
+C 0x4FB6 ...de pie
+C 0x4FC2 subiendo o bajando?
+C 0x4FCA los dos primeros: 16 arriba
+C 0x4FD3 en el primero no se gira
+C 0x4FD7 el mando
+C 0x4FDC derecha...
+C 0x4FE0 ...mirando a la izquierda?
+C 0x4FE6 un disparo menos en este cuadro
+C 0x4FEB ya mira a la derecha
+L 0x4FF1 agente_salta_izq
+C 0x4FF1 izquierda...
+C 0x4FFB un disparo menos en este cuadro
+C 0x5000 ya mira a la izquierda
+L 0x5004 agente_salta_giro         Al girarse en el aire se corrige la X 4 pixeles
+C 0x5005 el avance del salto
+L 0x5014 agente_salta_giro_d
+L 0x5018 agente_salta_giro_i
+L 0x501E agente_salta_corrige
+L 0x5024 agente_salta_dibujos
+C 0x5025 los dibujos del lado que mira
+L 0x5028 agente_salta_avanza
+C 0x5028 dos sprites de choque
+L 0x502A agente_salta_mueve
+C 0x502A donde esta en el mapa
+C 0x502D choca con una pared?
+C 0x5032 no: avanza
+L 0x503B agente_salta_fin
+C 0x5042 aterrizado: ya no salta
+C 0x5049 el cuarto cuadro...
+C 0x504E ...con suelo debajo...
+C 0x5056 ...baja 16
+L 0x5061 agente_en_puerta          Dentro de la puerta roja: la cierra, cobra los documentos y sale
+C 0x5061 un paso cada 14 cuadros
+C 0x5068 cuadro siguiente
+C 0x5074 la puerta...
+C 0x507A ...ya no es roja
+C 0x5081 su fila...
+C 0x5084 ...la pinta cerrada
+C 0x5087 los 500 puntos, con su rotulo en la puerta
+C 0x508D el sonido de los documentos
+C 0x5094 fuera de la puerta
+C 0x50A0 el siguiente movimiento en 7 cuadros
+L 0x50AA agente_en_puerta_espera   En una puerta azul se queda escondido hasta que se mueve el mando
+C 0x50B0 temporizador 0x1B: 255 cuadros escondido
+L 0x50BA agente_escondido
+C 0x50BE el mando
+C 0x50C3 la puerta...
+C 0x50C9 ...mira a la izquierda?
+C 0x50CD el agente a la derecha...
+C 0x50D1 ...se sale con la derecha
+L 0x50D5 agente_escondido_izq
+C 0x50D9 ...o con la izquierda
+L 0x50DB agente_escondido_sale
+C 0x50DD o cuando pasan los 255 cuadros
+L 0x50E5 agente_sale_puerta
+L 0x50EC agente_puerta_dibujo
+C 0x50EC la puerta abierta o cerrada
+L 0x50F2 agente_mando              Salto con 'x' o el segundo boton; si no, el mando
+C 0x50F2 'x'?
+C 0x50F9 el boton 2 del joystick?
+C 0x5100 suelto: el salto se puede repetir
+L 0x5107 agente_quiere_saltar
+C 0x5107 sigue pulsado desde el ultimo salto?
+C 0x510D se apunta
+C 0x5112 el sonido del salto
+C 0x5117 bit 4: saltando
+C 0x511F sin avance
+C 0x5123 hacia donde?
+C 0x512E mirando a la derecha y pulsando derecha
+L 0x5134 agente_salto_izq
+L 0x5138 agente_salto_quieto
+C 0x5138 sin moverse...
+C 0x513A ...salvo si andaba
+L 0x5140 agente_salto_lado
+C 0x5146 8 por cuadro, 4 al saltar
+L 0x514C agente_salto_lado_i
+L 0x5150 agente_salto_avance
+L 0x5153 agente_salto_empieza
+C 0x5153 en el aire
+C 0x5157 8 arriba
+C 0x515F en un ascensor?
+C 0x5165 tres sprites de choque
+C 0x5167 choca con algo?
+C 0x516D por debajo de la fila 0x8A (la parte baja)...
+C 0x5174 ...y en el borde de la pantalla...
+C 0x517B ...no avanza
+L 0x5180 agente_salto_mueve
+L 0x518A agente_direccion          Los cursores o el joystick: arriba y abajo agachan o llaman al ascensor; los lados andan
+C 0x518A el mando
+C 0x5190 nada
+C 0x5193 derecha
+C 0x5197 arriba (1, 2) o arriba-izquierda (8)
+C 0x5199 izquierda
+L 0x51A1 agente_sin_vertical
+C 0x51A1 en un ascensor?
+C 0x51A7 si: el ascensor se para
+L 0x51AA agente_abajo              Abajo: agacharse, o bajar el ascensor
+C 0x51AC encima del techo: agacharse
+C 0x51B2 en un ascensor: baja
+L 0x51B8 agente_agacha
+C 0x51BC de pie o andando?
+C 0x51C1 agachado
+L 0x51CB agente_arriba             Arriba: levantarse, o subir el ascensor
+L 0x51D9 agente_levanta
+C 0x51D9 agachado?
+C 0x51DF de pie
+L 0x51E9 agente_ascensor_sube
+C 0x51E9 su ascensor...
+C 0x51EF ...tiene el techo ocupado?
+C 0x51F3 entonces no sube
+L 0x51F4 agente_mueve_ascensor
+C 0x51F4 el ascensor, en la direccion A
+L 0x51F7 agente_horizontal
+C 0x51F8 izquierda (6, 7, 8)
+C 0x51FC 2, 3, 4: derecha
+L 0x5204 agente_para
+C 0x5204 andaba?
+C 0x520B de pie
+C 0x5213 la cuenta de la escalera mecanica a cero
+L 0x521A agente_izquierda
+C 0x521A ya mira a la izquierda: anda
+C 0x5224 registro 6 = 5: los dibujos dados la vuelta
+C 0x522B 4 a la izquierda al girarse
+L 0x522F agente_derecha
+C 0x5239 registro 6 = 4: los dibujos normales
+L 0x5242 agente_gira
+C 0x5248 al VDP
+C 0x524B andaba?
+L 0x525B agente_anda
+C 0x525F de pie o andando?
+C 0x5264 de pie...
+C 0x5268 cuadro 1, 2, 1, 2...
+C 0x5275 el sonido del paso
+L 0x527C agente_empieza_andar
+L 0x5284 agente_un_paso
+C 0x5284 4 pixeles
+L 0x5287 agente_suelo              Mira el suelo: el scroll le sigue cuando pasa de la Y 0x78; sin suelo, cae
+C 0x5287 que hay debajo?
+C 0x528C suelo: los bits del scroll
+C 0x5292 por encima de 0x78...
+C 0x5296 ...0x78 a 0x7F: quieto
+C 0x529C mas abajo: el edificio sube
+C 0x52A2 mas arriba: el edificio baja
+L 0x52A8 agente_sin_suelo
+C 0x52A8 un escalon (1): cae como al saltar
+L 0x52BE agente_hueco
+C 0x52BE el vacio (2)
+C 0x52C2 en un ascensor...
+C 0x52C8 ...dentro de la cabina...
+C 0x52CE ...baja con el
+L 0x52D8 agente_cae_hueco          Por el hueco del ascensor: se mata
+C 0x52D8 el sonido de caer
+C 0x52DD postura 0x40
+C 0x52E5 muriendo
+L 0x52E9 agente_comun              Ascensores, techos, puertas y el disparo
+C 0x52E9 entra o sale de un ascensor
+C 0x52EC un techo le aplasta?
+C 0x52EF entra en una puerta?
+C 0x52F4 los dibujos de siempre
+C 0x52FC muriendo: no dispara
+C 0x5302 de pie, andando o agachado...
+C 0x530D ...o en lo alto del salto...
+L 0x531E agente_dispara            Disparo con 'z' o el primer boton, uno por pulsacion
+C 0x531E 'z'?
+C 0x5325 el boton 1?
+C 0x532C suelto
+L 0x5332 agente_dispara_pulsado
+C 0x5332 ya disparo con esta pulsacion?
+C 0x533D le queda bala libre?
+C 0x5342 la bala
+C 0x5346 ha disparado de verdad?
+C 0x5350 los dibujos de disparar
+L 0x5353 agente_pon_dibujos
+L 0x5356 agente_fin
+L 0x5357 agente_puerta             De pie delante de una puerta roja o azul y mirando a ella: entra
+C 0x535A muriendo
+C 0x535E en un ascensor
+C 0x5362 tiene que estar de pie
+C 0x5368 delante de una puerta?
+C 0x536D la puerta mira a la derecha...
+C 0x5373 ...y el agente a la izquierda
+L 0x537B agente_puerta_izq
+L 0x5381 agente_entra_puerta
+C 0x5381 apunta la puerta
+C 0x538A bit 3: en una puerta
+C 0x5392 postura 0x10
+C 0x5396 la pinta abierta
+C 0x5399 el sonido de la puerta
+L 0x53A1 agente_puerta_no
+L 0x53A5 busca_puerta              IY = la puerta (de las 58) que el agente tiene delante; Z si la hay
+C 0x53A5 la tabla de puertas
+C 0x53A9 58
+C 0x53AB donde esta el agente
+C 0x53AE solo las que estan en pantalla
+C 0x53B4 coincide con el agente?
+L 0x53BC busca_puerta_sig
+L 0x53C7 dibujos_del_lado          Registro 6 del VDP: 4 (0x2000) mirando a la derecha, 5 (0x2800) a la izquierda
+L 0x53D3 dibujos_izquierda
+L 0x53D6 dibujos_al_vdp
+L 0x53DB agente_techo              Mira el techo encima de la cabeza: el ascensor que baja le aplasta
+C 0x53DB muriendo...
+C 0x53E1 ...por aplastamiento: sigue
+C 0x53EA de pie: 4 filas por encima
+C 0x53EF de pie
+C 0x53F3 andando
+C 0x53F7 agachado: 2 filas
+L 0x5406 agente_techo_bajo
+L 0x5408 agente_techo_mira
+C 0x5408 donde esta
+L 0x540E agente_techo_fila
+C 0x540E una fila arriba
+C 0x5414 suelo de la planta?
+L 0x541C agente_techo_suelo
+C 0x541C en un ascensor...
+C 0x5422 ...encima del techo...
+C 0x5428 ...y el ascensor sube?
+L 0x5434 agente_techo_cabina
+C 0x5434 la fila de encima del suelo
+C 0x543A el hueco de una cabina?
+C 0x543E que ascensor es
+C 0x5448 baja?
+C 0x544C se apunta
+L 0x5452 agente_aplastado_por
+C 0x5452 ya aplastado
+C 0x5458 saltando: se agacha y baja
+L 0x546C agente_techo_ocupado
+C 0x546C el techo ya tiene a alguien
+L 0x5470 agente_aplastado_ya
+L 0x547A agente_techo_marca
+C 0x547A el sonido del golpe
+C 0x547F el techo ocupado
+C 0x5481 aplastado bajo el techo
+L 0x5485 agente_techo_muere
+C 0x5489 el ascensor lleva a alguien?
+L 0x5491 agente_techo_nada
+L 0x5494 agente_ascensor           Sube a un ascensor (tile 0x3B: dentro; 0x2D: encima del techo) o se baja de el
+C 0x5496 muriendo
+C 0x549C donde esta
+C 0x54A3 la fila de los pies
+C 0x54A8 la cabina?
+C 0x54AC el hueco: el techo
+C 0x54B0 1: encima
+L 0x54B4 agente_ascensor_dentro
+C 0x54B4 2: dentro
+L 0x54B6 agente_ascensor_sube_a
+C 0x54B6 ya esta en uno
+C 0x54BD la esquina del ascensor...
+C 0x54C0 ...cual es?
+C 0x54C5 bit 7: lleva al agente
+C 0x54C7 se apunta
+C 0x54CD bit 1: en un ascensor
+C 0x54D1 encima?
+C 0x54D4 bit 5: encima del techo
+L 0x54DA agente_baja_ascensor
+C 0x54DA fuera del ascensor
+C 0x54EE el ascensor ya no le lleva
+C 0x54F0 el scroll no sigue al ascensor
+L 0x54F5 agente_ascensor_fin
+L 0x54F8 esquina_ascensor          Desde el tile HL busca la esquina de arriba a la izquierda de la cabina (A=2) o del techo (A=1); A = su planta
+C 0x54F9 el techo?
+L 0x54FD esquina_cabina_izq
+C 0x54FD a la izquierda mientras sea cabina
+L 0x5509 esquina_cabina_arriba
+L 0x5516 esquina_techo_izq
+C 0x5516 a la izquierda por el hueco y el cable
+L 0x5526 esquina_techo_abajo
+L 0x552F esquina_planta
+L 0x5534 busca_ascensor            HL = el ascensor de 11 que esta en la fila A y columna de HL; NZ si ninguno
+C 0x5538 11 ascensores de 10 bytes
+C 0x5542 en esa fila?
+C 0x5548 o, si es doble (bit 6), 12 filas mas abajo
+L 0x5555 busca_ascensor_columna
+C 0x5555 la columna
+L 0x555D busca_ascensor_sig
+L 0x5565 busca_ascensor_si
+L 0x556F columna_de                A = la columna (0-31) del tile HL del mapa
+L 0x5576 columna_resta
+L 0x557E columna_de_fin
+L 0x5583 fila_en_pantalla          A = la fila del tile HL contada desde arriba de la pantalla, menos 8
+L 0x5590 fila_resta
+L 0x5598 fila_fin
+L 0x559F un_paso                   Avanza IX 4 pixeles hacia donde mira, si no hay pared; en la escalera mecanica un paso de cada tres
+C 0x55A2 donde esta
+C 0x55A6 tres sprites de choque
+C 0x55A8 pared?
+C 0x55AF es el agente?
+C 0x55BE el tile de debajo
+C 0x55C1 el suelo...
+C 0x55CB ...o la escalera
+C 0x55D0 cuenta de la escalera
+L 0x55DA un_paso_escalera
+L 0x55DE un_paso_guarda
+L 0x55E3 un_paso_mueve
+L 0x55ED un_paso_derecha
+L 0x55EF un_paso_suma
+L 0x55F5 un_paso_fin
+L 0x55F9 choca_pared               NZ si en la columna de delante hay pared, tejado o cable (B filas desde los pies)
+C 0x55FA una fila
+C 0x55FD la columna de delante
+C 0x5601 saltando: se mira siempre
+C 0x5611 el tejado (0x0E, 0x0A, 0x09, 0x2E)
+C 0x5621 las paredes (0x61, 0x64)
+C 0x5629 el suelo
+C 0x562D el cable
+L 0x5639 choca_pared_otra
+
+C 0x563F la pared de la escalera
+L 0x5643 choca_sig
+L 0x564D choca_si
+L 0x5650 choca_fin
+L 0x5653 columna_delante           HL una columna a la derecha o a la izquierda segun mire (el agente en el aire, segun el avance)
+C 0x5658 es el agente?
+L 0x5664 columna_no_agente
+L 0x5666 columna_mira
+C 0x5666 mira a la izquierda?
+C 0x5671 saltando...
+C 0x5677 ...con avance a la derecha: la de la derecha
+L 0x5681 columna_izquierda
+L 0x5686 columna_mira_d
+L 0x5698 columna_derecha
+L 0x569B columna_delante_fin
+L 0x569D tile_de_los_pies          HL = posicion en pantalla (fila x 32 + columna) del tile delante de los pies de IX; A = X and 7
+C 0x56A2 lo que sobra dentro del tile
+C 0x56A5 4 pixeles por delante...
+C 0x56AD ...u 8 mirando a la izquierda
+C 0x56B2 / 8: la columna
+C 0x56BC la Y de los pies, menos 12...
+C 0x56BE ...entre 8: la fila
+L 0x56CC por_fila
+L 0x56D3 tile_en                   A = el tile del mapa en la posicion de pantalla HL (con el scroll)
+C 0x56D6 el scroll...
+C 0x56D9 ...dentro del mapa
+L 0x56E4 mueve_ascensor            El ascensor del agente: A=1 baja, A=2 sube, otro se para; al moverse, como mucho 20 cuadros de espera
+C 0x56E4 el ascensor
+C 0x56F2 parado (bit 4)
+L 0x56F6 ascensor_baja
+C 0x56F6 bit 0 = 0: baja
+L 0x56FA ascensor_sube
+C 0x56FA bit 0 = 1: sube
+L 0x56FC ascensor_marcha
+C 0x56FC en marcha
+C 0x56FE su numero...
+L 0x5709 ascensor_numero
+L 0x5712 ascensor_espera_max
+C 0x5712 ...es su temporizador
+C 0x5716 mas de 20 cuadros?
+C 0x571B se deja en 20
+L 0x5720 mueve_ascensor_fin
+B 0x5721 =====  Los sprites de una ficha  =====
+L 0x5721 pon_sprites               Pone en el buffer (IY) los B sprites de IX segun postura y cuadro; fuera de pantalla los esconde y C=1
+C 0x5724 la tabla de dibujos
+C 0x572A la postura: un bit
+L 0x572D pon_sprites_postura
+C 0x572D el bit que esta a 1...
+C 0x5731 ...dice la entrada
+L 0x5735 pon_sprites_lista
+C 0x5735 la lista de cuadros de esa postura
+C 0x5739 el cuadro
+L 0x573C pon_sprites_cuadro
+L 0x5743 pon_sprites_cuadro_ya
+C 0x5747 X
+C 0x574A Y
+C 0x574E dentro
+C 0x5750 por encima de la Y 0x28 (el marcador)...
+C 0x5754 ...por debajo de 0xB9...
+C 0x5758 ...o en la X 0xF8 y mas...
+L 0x575D pon_sprites_fuera         Fuera de pantalla: la ficha se apaga y, si es un enemigo de una puerta, la puerta queda libre
+C 0x575D fuera
+C 0x575F se apaga
+C 0x5763 en un ascensor: nada mas
+C 0x5769 de donde salio
+C 0x576F de una puerta?
+C 0x577C una de la tabla de puertas?
+C 0x5790 la puerta se cierra
+L 0x5795 pon_sprites_fuera_fin
+L 0x579C pon_sprites_uno           Cada sprite: dibujo, color y desplazamiento de la Y; 0xFF acaba
+C 0x579D fin de la lista
+C 0x57A1 el dibujo
+C 0x57A6 el color
+C 0x57A9 la X
+C 0x57AD la Y + desplazamiento
+C 0x57BD sobran sprites?
+L 0x57C2 pon_sprites_esconde
+L 0x57C7 pon_sprites_fin
+L 0x57CD que_hay_debajo            Busca suelo (0x60, 0x0A tejado, 0x78 escalera) hasta 3 filas bajo los pies: 0 a ras (encaja la Y), 1 un escalon, 2 nada
+C 0x57D0 tres filas
+C 0x57D5 donde esta
+L 0x57D8 debajo_fila
+C 0x57DB suelo
+C 0x57DF tejado
+C 0x57E3 arriba de la escalera
+C 0x57E7 la fila siguiente
+C 0x57EA nada: 2
+L 0x57EE debajo_suelo
+C 0x57EE filas bajadas x 8...
+C 0x57F7 ...a la Y
+C 0x57FD en la ultima fila?
+L 0x5805 debajo_escalon
+L 0x5807 debajo_fin
+L 0x580C esconde_sprite            Pone a cero el sprite IY, salvo si es de un enemigo escondido tras una puerta (bit 2)
+C 0x5810 los sprites 3 a 10...
+C 0x5819 ...son los de los enemigos
+L 0x5823 esconde_sprite_busca
+L 0x5830 esconde_sprite_enemigo
+C 0x5830 tras la puerta: se deja
+L 0x5837 esconde_sprite_cero
+L 0x5845 esconde_sprite_sig
+D 0x584E 0x5856 agente_disparo    Dibujos del agente disparando (por postura)
+D 0x5856 0x58A6 agente_dibujos    Tabla de dibujos del agente: una lista por postura y en cada una un puntero por cuadro
+D 0x58A6 0x5928 agente_cuadros    Los cuadros: por sprite dibujo, color y desplazamiento de la Y; 0xFF acaba
+D 0x5928 0x5930 txt_500           "500": lo que aparece en la puerta roja al coger los documentos
+
+# ---------------------------------------------------------------- las escaleras mecanicas
+# Solo hay escaleras en las plantas cuya fila / 6 va de 11 a 15. Cada tramo se sube o se baja en 7 pasos de 8
+# pixeles; el que la usa (agente o enemigo) lleva su cuenta en 0xC38B (3 bytes por usuario, 0xC397 cuantos).
+# Las tablas de 0x5E5E dan la X de cada paso: e = 1 y 2 bajan (a la derecha y a la izquierda), 3 y 4 suben.
+B 0x5930 =====  Las escaleras mecanicas  =====
+L 0x5930 agente_escalera           De pie al pie de una escalera y pulsando arriba o abajo: se sube a ella
+C 0x5931 de pie?
+C 0x5937 el mando
+C 0x593F arriba
+C 0x5943 abajo
+C 0x5947 0xFF: abajo
+L 0x594B agente_escalera_arriba
+L 0x594C agente_escalera_planta
+C 0x594D la fila del scroll...
+C 0x5951 ...entre 6: la planta
+C 0x5957 de la 11...
+C 0x595B ...a la 15
+C 0x5969 las de bajar
+C 0x596E o las de subir
+L 0x5975 agente_escalera_11
+L 0x597C agente_escalera_14
+L 0x5988 agente_escalera_15
+L 0x598D agente_escalera_no
+L 0x5990 agente_escalera_hay       La escalera tiene que ir hacia donde se pulsa
+C 0x5992 arriba: solo las de subir (C = 0xFF)
+L 0x5999 agente_escalera_baja
+L 0x599C agente_escalera_sube_a
+L 0x59A7 agente_escalera_x
+C 0x59AB en el borde izquierdo
+L 0x59B1 agente_escalera_x2
+C 0x59B5 en el borde derecho
+L 0x59B9 agente_escalera_lado
+L 0x59BD agente_escalera_izq
+L 0x59C3 agente_escalera_der
+L 0x59C7 agente_escalera_empieza
+C 0x59CA bit 2: en la escalera
+C 0x59CE el tramo
+C 0x59D2 un paso cada 2 cuadros
+C 0x59D7 paso 0
+C 0x59DC la X del primer paso
+C 0x59E2 el agente sin un sprite
+C 0x59E6 bajando: el scroll sigue
+C 0x59EB el sonido de la escalera
+C 0x59F4 los enemigos que van detras
+C 0x59FC el agente se ha movido
+L 0x5A02 escalera_bajar_aqui       Z si la X del agente es la de arriba de una escalera de bajar (C=0)
+C 0x5A04 tramo 1
+C 0x5A0C mirando a la izquierda?
+L 0x5A1A escalera_bajar_i
+L 0x5A20 escalera_bajar_2
+L 0x5A26 escalera_bajar_tramo_2
+C 0x5A26 tramo 2
+L 0x5A3C escalera_bajar_d
+L 0x5A42 escalera_bajar_ultima
+L 0x5A48 escalera_subir_aqui       Z si la X es la de abajo de una escalera de subir (C=0xFF)
+C 0x5A4A tramo 4
+L 0x5A60 escalera_subir_d
+L 0x5A66 escalera_subir_tramo_3
+C 0x5A66 tramo 3
+D 0x5A78 0x5A79 escalera_ret     Un "ret" (0xC9) que el salto de 0x5A72 se salta: 0x5A72 va a 0x5A79 y 0x5A76 a 0x5A85
+L 0x5A79 escalera_subir_ultima
+L 0x5A7D escalera_bajar_planta14   Planta 14: solo la de bajar del tramo 2
+L 0x5A81 escalera_subir_planta15   Planta 15: solo la de subir del tramo 3
+L 0x5A85 x_es                      Z si la X de IX es B
+D 0x5A8A 0x5A8C sin_uso_and_ret  Dos bytes que nada alcanza: "and a / ret"
+L 0x5A8C agente_en_escalera        Un paso de la escalera cada 2 cuadros: 7 pasos, el agente medio escondido tras el pasamanos
+C 0x5A8C la cuenta de cuadros
+C 0x5A91 el agente se ha movido
+C 0x5A96 otros 2 cuadros
+C 0x5A98 el tramo
+C 0x5A9C paso siguiente
+C 0x5AA0 subiendo?
+L 0x5AB9 agente_escalera_sube_paso
+L 0x5ACD escalera_pies_fuera       Paso 2: los tres sprites del agente sin dibujo (las piernas tras el escalon)
+L 0x5AD2 escalera_pies_sig
+L 0x5ADD escalera_paso_1
+L 0x5AE0 escalera_paso
+L 0x5AE8 escalera_x_del_paso       B = la X del paso E de la tabla HL, y los dos sprites del agente ahi
+L 0x5AEF escalera_paso_2b
+L 0x5AF4 escalera_paso_3
+L 0x5AF9 escalera_paso_4
+L 0x5AFE escalera_paso_5
+L 0x5B03 escalera_paso_6           Paso 6: el agente vuelve a tener piernas; los enemigos que bajaban detras siguen
+C 0x5B03 el scroll ya no sigue
+C 0x5B08 los tres sprites
+L 0x5B21 escalera_fin              Paso 7: fuera de la escalera, de pie y mirando hacia donde salio
+C 0x5B2C bit 2 fuera
+C 0x5B3A la X final
+C 0x5B3E los dibujos de siempre
+C 0x5B48 de pie
+C 0x5B50 subiendo, mira segun el tramo
+L 0x5B5C escalera_fin_izq
+L 0x5B60 escalera_fin_lado
+L 0x5B63 escalera_scroll           El scroll sigue al agente: 0x64 filas bajando o 0x75 subiendo
+C 0x5B66 bit 6: scroll de escalera
+C 0x5B68 bajando?
+C 0x5B70 bit 0 = 0
+L 0x5B74 escalera_scroll_sube
+L 0x5B78 escalera_scroll_guarda
+L 0x5B7D agente_dos_sprites        Los dos primeros sprites del agente en la X B (cabeza y cuerpo, dibujos 4 y 8)
+C 0x5B80 la Y del primero
+C 0x5B8B la del segundo, 9 mas abajo
+L 0x5B98 agente_tres_sprites       Los tres sprites del agente en la X B: dibujos 4, 8 y 0x0C
+L 0x5BC3 sprite_sin_dibujo         El dibujo del sprite siguiente (HL+2) a cero
+L 0x5BC8 enemigo_escalera          Un enemigo al pie de una escalera, si va en la direccion buena, se sube
+C 0x5BC9 de pie o andando?
+C 0x5BD1 hay escalera?
+C 0x5BD7 de las de subir?
+L 0x5BE8 enemigo_escalera_baja
+L 0x5BF3 enemigo_escalera_sube
+C 0x5BF5 su cuenta
+C 0x5BFA la X del primer paso
+C 0x5C02 sus sprites
+C 0x5C06 bajando...
+C 0x5C0C ...8 mas abajo
+L 0x5C0F enemigo_escalera_pon
+C 0x5C10 los pies, 24 por debajo
+C 0x5C1C cuerpo segun el lado
+L 0x5C24 enemigo_escalera_der
+L 0x5C26 enemigo_escalera_color
+C 0x5C27 color azul
+C 0x5C2C el tercer sprite sin dibujo
+C 0x5C2E de pie
+C 0x5C3A los dibujos de la escalera
+L 0x5C45 enemigo_escalera_der2
+L 0x5C4E enemigo_escalera_sonido
+C 0x5C4E el sonido de la escalera
+D 0x5C57 0x5C78 enemigo_escalera_dib  Dibujos del enemigo en la escalera (tres posturas)
+L 0x5C78 cuenta_escalera_nueva     Apunta a IX en la escalera: tramo E, paso 0, 2 cuadros
+L 0x5C8B cuenta_escalera           IY = la cuenta de escalera numero 0xC397 (3 bytes cada una)
+L 0x5C95 cuenta_escalera_sig
+L 0x5C9C hay_escalera              Z si IX esta al pie de una escalera de esta planta (en la Y 0x78, o una planta arriba o abajo)
+C 0x5C9C la planta del scroll
+C 0x5CA8 solo en filas multiplo de 6
+C 0x5CAA en la planta del agente?
+C 0x5CB3 una planta abajo
+L 0x5CB9 hay_escalera_arriba
+L 0x5CBD hay_escalera_planta
+L 0x5CD8 hay_escalera_14
+L 0x5CDF hay_escalera_15
+L 0x5CE2 hay_escalera_no
+L 0x5CE6 enemigo_escalera_no
+L 0x5CE9 enemigo_en_escalera       Un paso de la escalera del enemigo; si el agente va en ella, al mismo ritmo
+C 0x5CEC su cuenta
+C 0x5CF2 el agente en la escalera?
+C 0x5CF6 se mueve con el
+L 0x5CFF enemigo_escalera_cuenta
+C 0x5CFF cada 2 cuadros
+L 0x5D09 enemigo_escalera_paso
+C 0x5D09 paso siguiente
+C 0x5D0F el tramo
+L 0x5D30 enemigo_escalera_sube_p
+L 0x5D44 enemigo_escalera_baja8    Paso 2: 8 pixeles arriba o abajo y sin piernas
+L 0x5D4E enemigo_escalera_mas8
+L 0x5D50 enemigo_escalera_y
+L 0x5D67 enemigo_paso_1
+L 0x5D6C enemigo_paso_2b
+L 0x5D71 enemigo_paso_3
+L 0x5D76 enemigo_paso_4
+L 0x5D7B enemigo_paso_5
+L 0x5D80 enemigo_paso_6
+L 0x5D88 enemigo_escalera_fin      Fin: fuera de la escalera; espera 10 cuadros
+C 0x5D8E bit 2 fuera
+C 0x5D97 la cuenta libre
+C 0x5DA7 10 cuadros
+L 0x5DAC enemigo_escalera_ret
+L 0x5DAE enemigo_escalera_x        La X del paso, los dibujos y la Y (8 arriba o abajo)
+L 0x5DC7 enemigo_escalera_x_d
+L 0x5DD0 enemigo_escalera_x_y
+L 0x5DDB enemigo_escalera_x_mas
+L 0x5DDD enemigo_escalera_x_pon
+L 0x5DF3 enemigo_escalera_x_d2
+L 0x5DF5 enemigo_escalera_x_col
+L 0x5DF9 enemigo_escalera_piernas  Pasos 6 y 7: el enemigo entero otra vez (dibujos 0x58 y 0x5C)
+L 0x5E11 enemigo_escalera_pies
+L 0x5E40 enemigo_escalera_der3
+L 0x5E43 enemigo_escalera_dib_pon
+L 0x5E4B enemigo_escalera_sale
+L 0x5E4F sprites_del_enemigo       HL = los sprites (8 bytes) del enemigo numero 0xC397
+L 0x5E58 sprites_del_enemigo_sig
+D 0x5E5E 0x5E8B escalera_pasos    La X de cada paso de los 4 tramos de escalera (7 pasos)
+
+# ---------------------------------------------------------------- los ascensores
+# 11 ascensores de 10 bytes en 0xC0EC: +0 bits (0 subiendo, 1 techo ocupado, 3 lleva enemigo, 4 en marcha,
+# 5 el que baja al sotano, 6 doble: dos cabinas a 12 filas, 7 lleva al agente), +1 columna, +2 fila de la cabina,
+# +3/+4 su sitio en el mapa, +5 fila de arriba del recorrido, +6 la de abajo. Temporizadores 1 a 11.
+B 0x5E8B =====  Los ascensores  =====
+L 0x5E8B ascensores_cuadro         Mueve los 11 ascensores: los que estan cerca de la vista van y vienen solos
+C 0x5E8B los 11
+L 0x5E91 ascensor_uno
+C 0x5E92 con el techo ocupado no se mueve
+C 0x5E99 su temporizador
+C 0x5EA2 su fila...
+C 0x5EA5 ...la de la segunda cabina, si es doble
+C 0x5EAD respecto a la vista
+C 0x5EB3 por encima: quieto
+C 0x5EB5 menos de 13 filas: hacia abajo
+L 0x5EBF ascensor_lejos
+C 0x5EC9 a menos de 48 filas: sigue
+C 0x5ECD de 48 a 72: hacia arriba
+L 0x5ED3 ascensor_sube_ya
+L 0x5ED9 ascensor_fuera
+C 0x5EDB el ascensor 0 (el de la azotea) se mueve siempre
+L 0x5EE0 ascensor_extremos         En la fila de arriba del recorrido cambia a bajar; en la de abajo, a subir
+C 0x5EE3 arriba del todo?
+C 0x5EE8 abajo del todo?
+L 0x5EF8 ascensor_arriba
+L 0x5F01 ascensor_gira
+C 0x5F01 lleva al agente...
+C 0x5F07 ...y en marcha: lo decide el
+L 0x5F0D ascensor_guarda
+L 0x5F10 ascensor_mueve
+C 0x5F10 lleva al agente?
+C 0x5F16 no: una fila
+L 0x5F1B ascensor_mueve_vista      Con el agente dentro, lo que se mueve es la vista (bit 6 de 0xC0D0)
+L 0x5F28 ascensor_vista_baja
+L 0x5F2A ascensor_vista
+L 0x5F2F ascensor_parada           En una planta (suelo 0x60 o tejado al lado) espera 120 cuadros; si no, 20 por fila
+C 0x5F2F su sitio en el mapa
+C 0x5F35 la columna de su izquierda
+C 0x5F3C con el agente, una fila mas abajo...
+C 0x5F46 ...o una mas arriba si sube
+C 0x5F4B en marcha a mano: sin parada
+L 0x5F51 ascensor_mira_planta
+L 0x5F5A ascensor_espera_planta
+L 0x5F5E ascensor_espera_fila
+L 0x5F60 ascensor_espera
+L 0x5F67 ascensor_sig
+L 0x5F72 ascensor_una_fila         Sube o baja la cabina IX una fila y la vuelve a pintar en el mapa
+C 0x5F75 el mapa se vuelca despues
+C 0x5F78 sube?
+C 0x5F7E con un enemigo dentro...
+C 0x5F84 ...8 arriba
+C 0x5F89 fila - 1
+C 0x5F90 su sitio en el mapa
+C 0x5F99 la cabina
+C 0x5F9C doble: las dos
+C 0x5FA8 debajo del suelo...
+C 0x5FB1 ...el hueco
+L 0x5FB9 ascensor_baja_fila
+C 0x5FBF un enemigo dentro: 8 abajo
+C 0x5FC4 fila + 1
+C 0x5FD4 la de encima...
+C 0x5FDA ...salvo arriba del recorrido...
+L 0x5FE3 ascensor_cable
+C 0x5FE7 ...es cable
+L 0x5FED ascensor_pinta_cabina
+C 0x5FFC el del sotano...
+C 0x6002 ...en lo mas bajo...
+C 0x600A ...5 filas mas abajo...
+C 0x6017 ...el suelo del sotano
+L 0x6014 ascensor_sotano
+L 0x601D ascensor_pintado
+C 0x601D un tile fijo del sotano (0xCF6F = 0x68)
+C 0x6022 volcar en el proximo cuadro
+L 0x6026 enemigo_del_ascensor      Suma A a la Y del enemigo que va en el ascensor
+L 0x603C sitio_en_mapa             DE = 0xC400 + (A + 8) x 32 + la columna de IX
+L 0x604D fila_por_32               HL = (A + 8) x 32
+L 0x6055 fila_por_32_sig
+L 0x605A ascensores_nuevos         Los 11 ascensores de la tabla 0x60DB; uno al azar de los cinco ultimos baja al sotano
+C 0x605A uno de 5 al azar
+C 0x6064 la tabla
+L 0x6069 ascensor_nuevo
+C 0x606D fila de arriba
+C 0x6072 fila de abajo
+C 0x6077 columna
+C 0x607C fila de salida
+C 0x6085 120 cuadros antes de moverse
+C 0x608B de los cinco ultimos...
+C 0x6090 ...3 de cada 10...
+C 0x6099 ...son dobles
+C 0x609D y su recorrido 12 filas mas corto
+L 0x60A5 ascensor_sotano_azar
+C 0x60A5 el elegido...
+C 0x60A9 ...baja al sotano
+L 0x60B0 ascensor_nuevo_sig
+L 0x60B8 ascensor_hasta_sotano     El recorrido se alarga una planta (6 filas) y se pinta el hueco
+C 0x60BD 6 filas mas
+C 0x60CE seis filas de hueco
+L 0x60CA ascensor_hasta_sotano_d
+L 0x60D0 ascensor_hueco_fila
+D 0x60DB 0x6107 ascensores_tabla  Los 11 ascensores: fila de arriba, de abajo, columna y fila de salida
+D 0x6107 0x610C tira_cable        "hueco, cable, hueco" (0x2D 0x28 0x2D)
+D 0x610C 0x6123 tira_cabina       La cabina, 3 tiles de ancho (primer byte): techo 0x60, el hueco de dentro 0x3B y suelo 0x60; 0xFF acaba
+D 0x6123 0x6128 tira_hueco        Tres tiles de hueco (0x2D)
+D 0x6128 0x6163 tira_doble        Las dos cabinas del ascensor doble con el cable entre ellas
+D 0x6163 0x6168 tira_sotano       El suelo del hueco en el sotano (0x6B)
+
+# ---------------------------------------------------------------- los enemigos
+# 4 enemigos de 10 bytes en 0xC2E0: +0 bits (0 en juego, 1 en un ascensor, 2 en la escalera, 4 acaba de disparar,
+# 6 muriendo, 7 mira a la izquierda), +1 X, +2 Y, +3 postura (1 de pie, 2 andando, 4 agachado, 8 saltando,
+# 0x10 saliendo de una puerta, 0x20/0x40/0x80 muertes), +4 cuadro, +5/+6 dibujos, +7/+8 su puerta o ascensor.
+# Temporizadores: 0x15 el de salida de enemigos, 0x16-0x19 uno por enemigo.
+B 0x6168 =====  Los enemigos  =====
+L 0x6168 enemigos_cuadro           Los 4 enemigos: los que no estan en juego pueden salir por una puerta
+C 0x6168 los 4
+L 0x616E enemigo_uno
+C 0x616E su numero, para la escalera
+C 0x6175 en juego?
+C 0x617B salidas cortadas?
+C 0x6183 el temporizador de salida...
+C 0x618C ...cada 60 cuadros...
+C 0x6192 ...y la dificultad: 0xC327 cuentas de espera
+L 0x619F enemigo_sale              Sale un enemigo por una puerta azul al azar cerca del agente
+C 0x619F la cuenta vuelve a empezar
+C 0x61A7 su temporizador...
+C 0x61AB ...30 cuadros
+C 0x61B0 una de 6 puertas
+C 0x61B5 libre y en pantalla?
+C 0x61BB en juego
+C 0x61BF la puerta...
+C 0x61C5 ...en la pantalla
+C 0x61CC mira a la izquierda?
+L 0x61D9 enemigo_sale_der
+L 0x61DB enemigo_sale_sitio
+C 0x61DB a pixeles
+C 0x61E4 saliendo de la puerta
+C 0x61EC su puerta
+L 0x61F8 enemigo_en_juego
+C 0x61FD en la escalera...
+C 0x6203 ...con el agente tambien en ella
+L 0x6210 enemigo_mueve             Un paso cada 10 cuadros segun lo que este haciendo
+C 0x6216 10 cuadros
+C 0x621F en la escalera
+L 0x6229 enemigo_que_hace
+C 0x6229 muriendo
+C 0x622D en un ascensor
+C 0x6232 saliendo de la puerta
+C 0x6239 acaba de disparar?
+C 0x623E 40 cuadros...
+C 0x6244 ...y la bala
+L 0x6250 enemigo_muere             Las muertes del enemigo: cae, tiroteado o aplastado
+C 0x6250 un paso cada 30 cuadros
+C 0x6257 sus dibujos
+C 0x625D 0x40
+C 0x6261 0x80
+C 0x6265 0x20: aplastado
+L 0x6269 enemigo_muere_cuenta
+L 0x6276 enemigo_aplastado
+L 0x628A enemigo_aplastado_sig
+L 0x628D enemigo_aplastado_cuadro
+L 0x629B enemigo_aplastado_baja    El ascensor que le aplasta baja una fila, y la vista con el si lleva al agente
+C 0x62A1 lleva al agente?
+C 0x62A5 8 arriba...
+C 0x62AB ...o abajo
+L 0x62AD enemigo_aplastado_vista
+L 0x62B4 enemigo_aplastado_fila
+L 0x62C1 enemigo_fuera             Se acaba: libera el ascensor y su techo
+C 0x62CB en un ascensor?
+C 0x62D1 ya no lleva enemigo
+C 0x62D3 aplastado?
+C 0x62DA techo libre
+L 0x62DF enemigo_en_ascensor       Dentro de un ascensor: se da la vuelta en la pared y dispara si tiene al agente delante
+C 0x62E4 pared?
+C 0x62E9 se da la vuelta
+L 0x62EC enemigo_ascensor_mira
+C 0x62EC el agente a su altura?
+C 0x62F2 de pie
+L 0x62F9 enemigo_saliendo          Sale de la puerta: 6 cuadros con la puerta abierta
+L 0x62FC enemigo_saliendo_cuadro
+C 0x6305 en el cuarto, la vuelta
+L 0x630B enemigo_saliendo_fin
+C 0x630F en el septimo, si no ha salido, se va
+L 0x6316 enemigo_saliendo_puerta
+C 0x6316 la puerta
+L 0x6320 enemigo_anda              En el suelo: escalera, paredes y huecos le dan la vuelta; si ve al agente decide
+C 0x6324 se sube a una escalera?
+C 0x632D lo que tiene delante
+C 0x6332 el hueco del ascensor...
+C 0x6336 ...o su cabina...
+C 0x633A ...si no, la vuelta
+L 0x633D enemigo_anda_mira
+C 0x633D a la altura del agente?
+C 0x6342 que hace ahora
+L 0x6347 enemigo_anda_paso
+C 0x6347 andando?
+C 0x634D empieza a andar
+L 0x6357 enemigo_anda_cuadro
+C 0x635A cuadro 1, 2, 1, 2...
+C 0x6364 puede avanzar?
+C 0x6369 el paso
+C 0x636C se sube al ascensor?
+L 0x636F enemigo_anda_comun
+C 0x6370 sus dibujos
+C 0x6373 un ascensor le aplasta?
+L 0x637E enemigo_anda_suelo
+C 0x6383 sin suelo...
+C 0x6387 ...cae
+L 0x6393 enemigo_dispara           Si le toca por la dificultad y el agente esta a su altura, se gira hacia el y dispara
+C 0x6399 le toca?
+C 0x639E a su altura?
+C 0x63A3 mirando al agente
+C 0x63A6 bala libre?
+C 0x63AB los dibujos de disparar
+C 0x63B0 bit 4: la bala sale al paso siguiente
+C 0x63BA 40 cuadros
+L 0x63BF enemigo_sig
+C 0x63CA el agente ya no se ha movido
+L 0x63CE puerta_animada            Pinta la puerta de IX (+7/+8) abriendose o cerrandose segun el cuadro (+4)
+C 0x63D5 en el cuadro 4 no se mueve
+C 0x63E0 4 hacia donde mira
+L 0x63E4 puerta_animada_izq
+L 0x63E6 puerta_animada_x
+L 0x63ED puerta_animada_dibujo
+C 0x63F3 la puerta en movimiento
+C 0x63F8 2 y 5: medio abierta
+C 0x6400 1 y 4: abierta
+C 0x6408 3 y 6: cerrada
+C 0x640A mira a la izquierda?
+C 0x640E cerrada
+C 0x6415 bit 5: puerta sin dibujo (tiles 0)
+L 0x6420 puerta_cerrada_izq
+L 0x6432 puerta_medio
+L 0x643B puerta_medio_izq
+L 0x6440 puerta_abierta
+L 0x6449 puerta_abierta_izq
+L 0x644C puerta_pinta
+C 0x6450 bit 6, roja: los dibujos rojos, 8 bytes mas alla
+L 0x645A puerta_pinta_ya
+C 0x645A su fila
+C 0x6463 en el mapa
+C 0x6466 la pinta
+C 0x646C roja...
+C 0x6472 ...y abierta del todo...
+C 0x6484 ...la marca de su lado se borra (suelo 0x60)
+L 0x6482 puerta_borde_der
+L 0x6484 puerta_borde
+L 0x6487 puerta_animada_fin
+C 0x6488 volcar
+L 0x6492 puertas_repinta           Repinta cerradas las 58 puertas que se quedaron a medias
+C 0x6492 las 58 puertas
+L 0x6498 puerta_repinta
+C 0x6499 a medias?
+C 0x64A3 mira a la izquierda?
+C 0x64A9 azul
+C 0x64AC bit 5: sin dibujo
+L 0x64B7 puerta_repinta_izq
+L 0x64C3 puerta_repinta_roja
+L 0x64CD puerta_repinta_ya
+L 0x64D6 puerta_repinta_sig
+L 0x64E4 enemigo_decide            Cada cierto tiempo cambia de postura al azar segun la ronda (tabla 0x6539)
+C 0x64E7 hora punta?
+C 0x64ED como la ronda 6
+L 0x64F1 enemigo_decide_ronda
+L 0x64F4 enemigo_decide_tabla
+L 0x64F7 enemigo_decide_busca
+C 0x64F7 la fila de su ronda
+L 0x6500 enemigo_decide_azar
+C 0x6503 de 1 a 80...
+C 0x6508 ...solo por debajo de 11 cambia
+L 0x650C enemigo_decide_postura
+C 0x650C los umbrales: de pie, andando, agachado, saltando
+L 0x6514 enemigo_decide_pon
+L 0x651B enemigo_decide_abajo
+C 0x651D andando...
+C 0x6523 ...por debajo de la fila 0x8A...
+C 0x652C ...se queda de pie
+L 0x6534 enemigo_decide_fin
+D 0x6539 0x6557 enemigo_posturas  Por ronda (1-5, y la 6 en adelante): umbrales de las cuatro posturas al azar
+L 0x6557 enemigo_le_toca_disparar  Z si dispara: probabilidad de 20 segun la ronda (tabla 0x6572)
+L 0x655E enemigo_le_toca_busca
+L 0x6565 enemigo_le_toca_azar
+L 0x656F enemigo_le_toca_fin
+D 0x6572 0x6578 enemigo_disparos  Rondas 1-2: 2 de 20; 3-4: 4 de 20; de la 5: 6 de 20
+L 0x6578 da_la_vuelta              Cambia el lado al que mira IX y le mueve 4 hacia alli
+L 0x6586 da_la_vuelta_der
+L 0x658C da_la_vuelta_x
+L 0x6594 a_la_altura_del_agente    Z si la Y de IX cae en los 32 pixeles por encima de los pies del agente
+C 0x6597 los pies del agente
+L 0x65A8 a_la_altura_no
+L 0x65AA a_la_altura_fin
+L 0x65AC mira_al_agente            Gira a IX hacia el agente
+C 0x65AC la X del agente
+L 0x65C2 mira_al_agente_izq
+L 0x65CE mira_al_agente_x
+L 0x65D4 mira_al_agente_fin
+
+D 0x65D5 0x661A sin_uso_puerta_cerca  CODIGO SIN USO (69 bytes): mira si la puerta IY queda a la izquierda o a la derecha de IX en su planta. Ningun call ni jp lleva a 0x65D5 y en el cartucho no hay saltos indirectos
+# ---------------------------------------------------------------- las puertas
+# 58 puertas de 5 bytes en 0xC16E: +0 bits (4 a medio pintar, 5 sin dibujo, 6 roja con documentos, 7 mira a la
+# izquierda), +1 columna, +2 fila, +3/+4 el tile del mapa que hay delante. Las rojas se eligen al azar en cada ronda.
+L 0x661A delante_de_la_puerta      Z si el tile de los pies de IX es el de delante de la puerta IY
+C 0x661F en el mapa
+C 0x6624 el byte bajo...
+C 0x662A ...y el alto
+L 0x6633 delante_no
+L 0x6635 delante_fin
+L 0x6639 dibujos_enemigo           Los dibujos del enemigo segun el lado: A=0 los normales, A=1 los de disparar
+C 0x663D mira a la izquierda?
+L 0x6648 dibujos_enemigo_izq
+L 0x664D dibujos_enemigo_disparo
+L 0x6658 dibujos_enemigo_disparo_i
+L 0x665B dibujos_enemigo_pon
+L 0x6663 suelo_delante             Z si el tile de delante de los pies es suelo (0x60) o marca de puerta roja (0x78)
+L 0x6672 enemigo_ascensor          El enemigo se sube a un ascensor (por dentro o al techo), salvo si lleva al agente o a otro
+C 0x6677 muriendo
+C 0x6685 la fila de los pies
+C 0x668A la cabina?
+C 0x668E el techo?
+L 0x6696 enemigo_ascensor_dentro
+L 0x6698 enemigo_ascensor_sube
+C 0x6698 ya en uno
+C 0x669F la esquina...
+C 0x66A2 ...el ascensor
+C 0x66A7 lleva al agente?
+C 0x66AB ya lleva enemigo?
+C 0x66AF el agente a su altura: no sube
+L 0x66B4 enemigo_ascensor_no
+C 0x66B4 se da la vuelta
+L 0x66C5 enemigo_ascensor_si
+C 0x66C5 lleva enemigo
+C 0x66C7 el agente mas abajo...
+C 0x66CF ...el ascensor sube...
+L 0x66D3 enemigo_ascensor_baja
+C 0x66D3 ...o baja
+L 0x66D5 enemigo_ascensor_apunta
+C 0x66DB el ascensor sabe quien lleva
+C 0x66E1 y el enemigo en cual va
+C 0x66E7 bit 1: en un ascensor
+C 0x66EB encima?
+L 0x66F4 enemigo_baja_ascensor
+L 0x670A enemigo_ascensor_fin
+L 0x6710 a_pixeles                 De la posicion HL del mapa a pixeles: H = X, L = Y (fila + 2) x 8
+L 0x6718 a_pixeles_fila
+L 0x6721 a_pixeles_fin
+L 0x6732 puerta_libre              IY = la C-esima puerta azul entre 4 filas por encima y 9 por debajo de la vista; NZ si no hay
+C 0x6733 la vista...
+C 0x6737 ...4 filas arriba...
+C 0x673B ...9 abajo
+C 0x673E las 58 puertas
+L 0x6744 puerta_libre_mira
+L 0x674F puerta_libre_azul
+C 0x674F roja: no
+L 0x6758 puerta_libre_sig
+L 0x6764 puerta_libre_fin
+L 0x6765 puertas_nuevas            Las 58 puertas de la tabla 0x69EB y las rojas de la ronda, al azar
+C 0x6765 la tabla
+L 0x676E puerta_nueva
+C 0x676E 0xFF: acabada
+C 0x6777 bits, columna y fila
+C 0x677D el tile de delante: 3 filas mas abajo...
+C 0x678B ...y al lado que mira
+L 0x6795 puerta_nueva_izq
+L 0x6796 puerta_nueva_guarda
+L 0x67A6 puertas_rojas             Por ronda (hasta la 9) cuantas rojas salen de cada uno de los tres grupos de puertas
+C 0x67A6 la ronda...
+C 0x67AC ...la 9 vale para las demas
+L 0x67B2 puertas_rojas_ronda
+C 0x67B2 3 bytes por ronda
+L 0x67BC puertas_rojas_grupo
+C 0x67BE ninguna en este grupo
+C 0x67CA la lista del grupo
+C 0x67D2 cuantas puertas tiene
+L 0x67D4 puertas_rojas_una
+C 0x67D7 una al azar...
+C 0x67E1 ...su ficha...
+C 0x67E4 ...roja
+L 0x67F0 puertas_rojas_sig
+L 0x67F6 ficha_de_puerta           HL = la puerta numero A (desde 1)
+L 0x67FC ficha_de_puerta_sig
+L 0x6802 ficha_de_puerta_fin
+L 0x6803 pinta_roja                La puerta HL pasa a roja: bit 6, dibujo rojo y la marca 0x78 a su lado
+C 0x6806 roja
+C 0x6808 mira a la izquierda?
+L 0x6812 pinta_roja_izq
+L 0x6815 pinta_roja_ya
+L 0x6825 pinta_roja_marca_izq
+L 0x6826 pinta_roja_marca
+D 0x682A 0x6845 rojas_por_ronda   Rondas 1 a 9: cuantas puertas rojas salen de cada grupo (3 bytes): 5, 6, 7, 8, 9 y 10 desde la 6
+D 0x6845 0x684B rojas_grupos      Donde esta la lista de cada uno de los tres grupos
+D 0x684B 0x6884 rojas_listas      Cada lista: cuantas puertas y sus numeros
+D 0x6884 0x6894 enemigo_dibujos_disparo  Dibujos del enemigo disparando, mirando a la derecha y a la izquierda
+D 0x6894 0x68B4 enemigo_dibujos   Dibujos del enemigo por postura, a la derecha y a la izquierda
+D 0x68B4 0x697B enemigo_cuadros   Los cuadros del enemigo: dibujo, color y desplazamiento de la Y; 0xFF acaba
+D 0x697B 0x69EB puerta_dibujos    Puertas de 2 x 3 tiles: abiertas, medio y cerradas (izquierda/derecha), en azul y en rojo; las de tiles 0
+D 0x69EB 0x6A9A puertas_tabla     Las 58 puertas: bits, columna y fila; 0xFF acaba
+
+# ---------------------------------------------------------------- choques, disparos y la lampara
+B 0x6A9A =====  La lampara que cae y la patada  =====
+L 0x6A9A golpes_al_enemigo         La lampara que cae mata a quien pilla debajo; la patada en el salto, al enemigo de al lado
+C 0x6A9A el agente
+C 0x6A9E los 4 enemigos
+C 0x6AA4 en juego...
+C 0x6AAC ...y vivo
+L 0x6AB1 golpe_enemigo
+C 0x6AB4 cae una lampara?
+C 0x6ABB de que lado?
+C 0x6AC3 izquierda: X 0x44 o 0x48
+L 0x6ACD golpe_lampara_der
+C 0x6ACD derecha: X 0xA0 o 0xA4
+L 0x6AD7 golpe_lampara             La lampara (sprite 25) a menos de 16 pixeles por encima de la cabeza
+C 0x6AD7 la Y de la lampara...
+C 0x6ADA ...mas 24
+C 0x6AE7 en juego
+C 0x6AED vivo
+C 0x6AF3 fuera de su puerta
+C 0x6AFB muriendo...
+C 0x6B03 ...postura 0x80
+C 0x6B0D 30 cuadros
+C 0x6B16 300 puntos
+L 0x6B1B golpe_patada              El agente saltando toca al enemigo: 150 (200 a oscuras o con la vista entre las filas 0x5E y 0x7A)
+C 0x6B1D el agente salta?
+C 0x6B2A vivo
+C 0x6B2E fuera de su puerta
+C 0x6B34 ni en la escalera
+C 0x6B38 menos de 17 de alto...
+C 0x6B42 ...y de 8 a cada lado
+L 0x6B50 golpe_patada_da
+C 0x6B58 postura 0x80
+C 0x6B6B 150 puntos
+C 0x6B6E a oscuras?
+C 0x6B74 o con la vista en esas filas
+L 0x6B7F golpe_patada_200
+C 0x6B7F 200
+L 0x6B82 golpe_puntos
+C 0x6B85 el sonido del golpe
+L 0x6B8A golpe_sig
+L 0x6B94 golpes_fin
+B 0x6B95 =====  Las balas  =====
+L 0x6B95 dispara                   Una bala de IX: A=0 del agente (3, temporizadores 0x0E-0x10), A=1 de enemigo (4, 0x11-0x14)
+C 0x6B9E el agente ha disparado
+C 0x6BA2 las del agente
+L 0x6BAC dispara_enemigo
+C 0x6BAC las de los enemigos
+L 0x6BB4 dispara_busca
+C 0x6BB4 libre?
+C 0x6BC1 ninguna libre
+C 0x6BC5 no ha disparado
+L 0x6BCA dispara_sale
+C 0x6BCD un paso cada 2 cuadros
+C 0x6BD2 bits, X, Y y postura del que dispara
+C 0x6BDD cuadro 1
+C 0x6BE1 hacia la izquierda?
+L 0x6BEC dispara_der
+L 0x6BEF dispara_dibujo
+C 0x6BF7 a la altura de la pistola
+C 0x6BFB el sonido: 5 el agente...
+C 0x6C00 ...1 un enemigo
+L 0x6C02 dispara_sonido
+L 0x6C06 dispara_fin
+L 0x6C0C bala_choca                NZ si delante de IX hay pared o puerta; la lampara (0x77) se rompe de un tiro
+C 0x6C14 una fila arriba
+C 0x6C1F la lampara?
+L 0x6C23 bala_choca_mira
+C 0x6C23 paredes, tejado y suelo
+C 0x6C3F 0x1A a 0x27
+C 0x6C4F de 0xBB en adelante: nada
+C 0x6C53 0xB0 a 0xBA: los numeros de planta
+C 0x6C57 0x90 a 0xAF: nada
+C 0x6C5B 0x83 a 0x8F: puertas rojas
+L 0x6C61 lampara_tiro              La primera bala que llega a una lampara la rompe: queda a oscuras y la lampara cae
+C 0x6C62 ya a oscuras?
+C 0x6C6A a oscuras
+C 0x6C6F en el mapa...
+C 0x6C7A ...la lampara rota (0xC0)
+C 0x6C7C de que lado
+L 0x6C86 lampara_lado
+C 0x6C8A la Y de la bala...
+C 0x6C97 ...es donde empieza a caer
+L 0x6C9C bala_libre
+L 0x6C9F bala_para
+L 0x6CA1 bala_choca_fin
+L 0x6CA5 bala_altura               La bala sale a la altura de la pistola segun la postura (tablas 0x6EE3/0x6EEB) y 8 por delante
+C 0x6CA5 del agente
+C 0x6CAB de un enemigo
+L 0x6CAE bala_altura_postura
+L 0x6CB1 bala_altura_busca
+L 0x6CB9 bala_altura_pon
+C 0x6CBE la guarda en +9
+L 0x6CD1 bala_altura_izq
+L 0x6CD3 bala_altura_x
+L 0x6CDA balas_cuadro              Mueve las 3 balas del agente y las 4 de los enemigos
+L 0x6CF1 bala_mueve
+C 0x6CF2 en juego?
+C 0x6CF8 su temporizador
+C 0x6D01 cada 2 cuadros
+C 0x6D09 volando?
+C 0x6D10 chocada: un cuadro de choque...
+C 0x6D17 ...y fuera
+L 0x6D1D bala_avanza
+C 0x6D1D choca?
+C 0x6D22 4 pixeles
+L 0x6D2C bala_avanza_x
+L 0x6D34 bala_chocada
+C 0x6D34 el dibujo del choque...
+C 0x6D38 ...20 cuadros
+C 0x6D3E el sonido del choque
+L 0x6D43 bala_sig
+L 0x6D4C balazos                   Las balas enemigas contra el agente y las del agente contra los enemigos
+C 0x6D4C el agente...
+C 0x6D50 ...contra las balas enemigas
+C 0x6D5C en la escalera: no le dan
+C 0x6D63 muriendo
+C 0x6D67 en una puerta: escondido
+C 0x6D6B su alto segun la postura
+L 0x6D71 balazos_postura
+L 0x6D78 balazos_salto
+C 0x6D78 en el aire...
+C 0x6D89 ...otra fila
+L 0x6D8A balazos_mira
+C 0x6D8B 4 balas
+C 0x6D90 le dan?
+C 0x6D95 los dibujos de siempre
+C 0x6D9B 30 cuadros
+C 0x6DA2 el sonido del balazo
+C 0x6DA7 saltando...
+C 0x6DAD ...sobre el vacio...
+C 0x6DB6 ...cae 24
+L 0x6DBE balazos_enemigos          Las 3 balas del agente contra los 4 enemigos
+L 0x6DC8 balazo_enemigo
+C 0x6DD0 en la escalera no
+C 0x6DDB saliendo de la puerta no
+C 0x6DE1 su alto
+L 0x6DE7 balazo_postura
+L 0x6DEE balazo_mira
+C 0x6DF4 le da?
+C 0x6DF9 dibujos de caer
+C 0x6E08 100 puntos
+C 0x6E0B a oscuras...
+C 0x6E11 ...o con la vista en esas filas...
+L 0x6E1C balazo_150
+C 0x6E1C ...150
+L 0x6E1F balazo_puntos
+C 0x6E22 el sonido del golpe
+L 0x6E27 balazo_sig
+L 0x6E2F balazos_fin
+L 0x6E30 bala_da                   NZ si alguna de las C balas de IY da a IX (B filas de 8 desde los pies); la bala choca e IX cae (postura 0x80)
+L 0x6E35 bala_da_una
+C 0x6E36 en juego?
+C 0x6E3C volando?
+C 0x6E43 a 4 pixeles o menos
+C 0x6E51 la altura de la bala
+L 0x6E58 bala_da_fila
+L 0x6E61 bala_da_si
+C 0x6E61 la bala choca
+C 0x6E69 IX muriendo
+C 0x6E6D postura 0x80
+L 0x6E77 bala_da_sig
+L 0x6E88 altura_bala               A = la Y de la bala sin el desplazamiento de la postura, segun la tabla HL
+L 0x6E8D altura_bala_busca
+L 0x6E94 altura_bala_y
+L 0x6E9B altura_bala_resta
+L 0x6EA2 altura_bala_fin
+D 0x6EA5 0x6EB1 altos             Cuantas filas de 8 ocupa cada postura (agente y enemigos)
+D 0x6EB1 0x6EB6 altos_agente      Las del agente
+D 0x6EB6 0x6EC6 bala_dibujos      Dibujos de las balas por postura (derecha e izquierda)
+D 0x6EC6 0x6EE3 bala_cuadros      Los cuadros de la bala: volando y el choque
+D 0x6EE3 0x6EF3 bala_alturas      Donde esta la pistola en cada postura (agente y enemigo)
+D 0x6EF3 0x6EF7 bala_alturas_d    Los desplazamientos: -13, -6, 0
+B 0x6EF7 =====  Los puntos  =====
+L 0x6EF7 suma_puntos               Suma a los 7 digitos ASCII de 0xC082 la lista HL (cuantas cifras y luego las cifras, de las unidades arriba)
+C 0x6EFD cuantas cifras
+C 0x6EFF las unidades estan en 0xC088
+L 0x6F03 suma_cifra
+C 0x6F07 pasa de 9?
+C 0x6F0D me llevo una
+L 0x6F10 suma_cifra_guarda
+L 0x6F1B suma_acarreos             Propaga lo que quede por encima de 9
+L 0x6F21 suma_acarreo
+L 0x6F2D suma_acarreo_guarda
+C 0x6F39 la cifra de los millones...
+C 0x6F3C ...pasada de 9...
+C 0x6F40 ...vuelve a 0
+L 0x6F42 suma_fin
+L 0x6F4C cuenta_por_puntos         Lleva en 0xC0D4 una cuenta segun las decenas de millar; nada mas la lee
+C 0x6F4C las decenas de millar...
+C 0x6F51 ...como numero
+C 0x6F54 / 4
+C 0x6F5E la primera vez...
+C 0x6F64 ...sin nada, nada
+L 0x6F6B cuenta_por_puntos_mas
+L 0x6F78 cuenta_por_puntos_suma
+L 0x6F83 cuenta_por_puntos_fin
+L 0x6F84 cifras_a_numero           DE = las B cifras ASCII de HL como numero
+L 0x6F87 cifras_a_numero_sig
+C 0x6F8C x 10
+B 0x6F9C =====  El marcador  =====
+L 0x6F9C marcador                  Los puntos y las vidas a la VRAM (no despues del fin de partida)
+C 0x6F9C fin de partida?
+C 0x6FA3 los puntos...
+C 0x6FA6 ...sin ceros a la izquierda...
+C 0x6FA9 ...a la fila de arriba
+C 0x6FB5 las vidas...
+C 0x6FBE ...abajo a la izquierda
+L 0x6FC7 marcador_fin
+L 0x6FC8 cifras_sin_ceros          Copia 6 cifras de DE a 0xC339 cambiando los ceros de la izquierda por espacios, y un 0 al final
+L 0x6FCD cifras_cero
+L 0x6FDA cifras_copia
+L 0x6FE0 cifras_fin
+L 0x6FE3 rotulo_y_puntos           Saca un rotulo que se despliega (lista HL: el rotulo y los puntos que da al acabar)
+C 0x6FE5 la ficha del rotulo
+C 0x6FE9 el rotulo
+C 0x6FF3 los puntos que da al final
+L 0x7000 rotulo_saca               Empieza a sacar el rotulo HL en el mapa DE; cada 30 cuadros un paso, 6 pasos
+C 0x7006 en marcha (corta las salidas de enemigos)
+C 0x700A paso 1
+C 0x700E donde va
+C 0x7014 el primer paso a 0xE000
+C 0x7017 y guardado lo que habia
+C 0x7022 temporizador 0x1A...
+C 0x7024 ...30 cuadros
+L 0x702C rotulo_cuadro             Avanza el rotulo; al sexto paso lo quita y suma sus puntos
+C 0x7030 hay rotulo?
+C 0x7036 toca paso?
+C 0x7044 paso siguiente
+C 0x704A hasta el 6
+L 0x7067 rotulo_fin
+C 0x7067 se acabo
+C 0x706B sus puntos
+L 0x7074 rotulo_ret
+L 0x7075 record                    Si los 7 digitos de DE son mas que el record HL, se copian; NZ si hay record nuevo
+L 0x7079 record_cifra
+L 0x7081 record_igual
+L 0x7085 record_no
+L 0x708A record_si
+L 0x7093 record_fin
+
+L 0x7095 numero_a_cifras           A (0-99) a dos cifras ASCII en 0xC32F; por debajo de 10, la segunda es un espacio
+L 0x7099 una_cifra
+L 0x70A5 dos_cifras
+C 0x70A5 100 o mas...
+C 0x70A9 ...0
+L 0x70AC dos_cifras_cuenta
+L 0x70AE dos_cifras_decenas
+L 0x70B6 dos_cifras_pon
+L 0x70C2 numero_fin
+L 0x70C3 pon_bloque_guardando      Pone en el mapa DE el bloque HL (ancho y filas hasta 0xFF) y guarda en 0xE000 lo que tapa
+C 0x70C7 lo tapado
+C 0x70CB el ancho
+L 0x70D4 pon_bloque_fila
+C 0x70D5 0xFF acaba
+C 0x70E3 guarda la fila del mapa
+C 0x70F0 y pone la del bloque
+L 0x70FD pon_bloque_fin
+C 0x7101 volcar
+D 0x710B 0x7126 puntos_tablas     Puntos (cuantas cifras y las cifras de las unidades arriba): 0, 100, 150, 200, 300, 500 y 1000
+L 0x7126 copia_con_largo           Copia a DE los bytes de HL precedidos de su largo (dos bytes); largo 0, nada
+L 0x7130 descomprime               RLE con dos corrientes: los codigos (n: copiar n; 0x80+n: repetir n veces) y los bytes
+C 0x7132 largo de los codigos
+C 0x7136 los codigos en IX...
+C 0x7139 ...y los bytes detras
+L 0x713A descomprime_codigo
+C 0x713D 0: acabado
+C 0x7140 menos de 0x80: copia
+C 0x7143 repetir n veces...
+C 0x7148 ...el byte siguiente
+L 0x7156 descomprime_repetido
+L 0x7160 descomprime_copia
+L 0x7169 descomprime_fin
+B 0x716C =====  La entrada de la ronda 1: el agente baja por el cable  =====
+L 0x716C entrada_cable             Solo en la ronda 1: se tiende el cable hasta la azotea y el agente se desliza por el
+C 0x716C paso 0
+C 0x7170 se juega (la interrupcion trabaja)
+C 0x7174 el sonido 0x0D
+L 0x7179 cable_paso                8 pasos: el cable crece desde la esquina
+C 0x7179 8 cuadros
+C 0x717F acabado?
+C 0x7187 el dibujo del paso
+C 0x7193 ancho
+C 0x7195 alto
+C 0x7197 arriba a la izquierda del mapa
+L 0x71A4 cable_tendido             El cable entero y el agente colgado: sus dibujos propios a 0x2680/0x2E80
+C 0x71A7 tres trozos del gancho
+C 0x71C2 y el ultimo de 5 x 4
+C 0x71D1 pantalla sin interrupcion
+C 0x71D7 el agente colgado...
+C 0x71E4 ...y dado la vuelta
+C 0x71F5 sus tres sprites
+C 0x7200 el sonido 0x10
+C 0x7205 14 pasos
+L 0x7207 cable_baja
+L 0x7210 cable_baja_mirando        10 pasos mas cambiando de lado (el registro 6 alterna)
+C 0x7228 los dibujos de soltarse
+L 0x723A cable_suelta              El agente cae a la azotea hasta la Y 0x70
+L 0x724D cable_quita               Se borra el cable del mapa
+C 0x7263 el sonido 0x11
+C 0x7268 16 cuadros
+C 0x726D dado la vuelta...
+C 0x7273 ...24 cuadros
+C 0x7278 normal
+L 0x7287 cable_quita_fila
+C 0x7295 los dibujos normales...
+C 0x72AC 16 cuadros
+L 0x72B2 cable_desliza             Seis cuadros y los B sprites 1 abajo y 4 a la derecha
+L 0x72BD cable_desliza_uno
+L 0x72CA pon_bloque_3x4            Un bloque de 4 x 3 en el mapa y a volcar
+L 0x72CF pon_bloque_y_vuelca
+L 0x72D7 espera_8                  Espera 8 cuadros con el temporizador 0
+L 0x72D9 espera_b                  Espera B cuadros con el temporizador 0
+L 0x72DD espera_b_sig
+D 0x72E9 0x72F5 cable_sprites     Los tres sprites del agente colgado (Y, X, dibujo, color)
+D 0x72F5 0x7329 cable_gancho      El gancho del cable en la azotea, en tres trozos y uno de 5 x 4
+D 0x7329 0x73E9 cable_dibujos     El agente colgado: tres sprites de 16 x 16 mirando a cada lado
+D 0x73E9 0x73F9 cable_pasos       Los 8 dibujos del cable creciendo
+D 0x73F9 0x7555 cable_pasos_d     Cada dibujo: ancho, alto y tiles
+B 0x7555 =====  El sonido  =====
+L 0x7555 sonido_apaga              Silencio: guarda los bits altos del registro 7 del PSG y para los tres canales
+C 0x7557 RDPSG 7
+C 0x755A los de los puertos de E/S
+C 0x755F GICINI
+L 0x7562 sonido_calla              Para los tres canales
+C 0x7563 canal A
+C 0x756C canal B
+C 0x7575 canal C
+L 0x7580 sonido                    Pide el sonido A: con el bit 7, una musica (tabla 0x9AB5, tres canales); si no, un efecto (0x9A8F) con prioridad
+C 0x7587 la peticion
+C 0x758B musica?
+C 0x758F los efectos
+C 0x7595 mas prioridad que el que suena?
+C 0x759B al canal A
+L 0x75A3 sonido_musica
+C 0x75A5 las musicas
+C 0x75AB sus tres canales
+C 0x75B5 hay canal B?
+L 0x75C6 sonido_musica_c
+C 0x75C6 hay canal C?
+L 0x75D7 sonido_fin
+L 0x75DF tabla_puntero             HL = el puntero A de la tabla HL
+L 0x75EC sonido_cuadro             En la interrupcion: arranca lo pedido, escribe el PSG y avanza las notas
+L 0x75F6 sonido_arranca            Los canales pedidos (bits de 0xC3AB) empiezan su lista
+C 0x75FA los pedidos
+C 0x7603 el canal A
+L 0x7613 sonido_arranca_b
+L 0x7629 sonido_arranca_c
+L 0x763E sonido_arranca_fin
+L 0x7643 sonido_prioridad          Copia la peticion si su prioridad no es menor que la del efecto que suena; NZ si no
+L 0x7652 sonido_prioridad_si
+L 0x765A sonido_prioridad_fin
+L 0x765E psg_escribe               La copia del PSG (0xC3CA) a los registros que toque segun 0xC3DB
+C 0x765E nada que escribir
+C 0x766B todo apagado antes
+L 0x7676 psg_escribe_todo
+L 0x767A psg_escribe_reg
+C 0x767B WRTPSG
+C 0x7688 el registro 7, con los bits de E/S
+L 0x7698 psg_escrito
+L 0x769D psg_escribe_vol
+L 0x76B8 psg_escribe_sig
+L 0x76BD canal_nota                Pone en el canal C la nota HL: tono, ruido, volumen, envolvente, duracion y vibrato
+C 0x76C9 el canal A
+L 0x76DC canal_nota_ya
+C 0x76DE sin nota: silencio
+L 0x76E6 canal_nota_lee
+C 0x76E6 donde va
+C 0x76EC los bits del mezclador
+C 0x76F3 el vibrato
+C 0x76F8 el tono bajo
+C 0x7709 el alto y el volumen
+C 0x7715 la envolvente
+C 0x771E con envolvente?
+C 0x7737 el volumen
+C 0x7741 con ruido?
+C 0x7748 el ruido
+C 0x774C la velocidad del vibrato
+C 0x775F la duracion
+L 0x7737 canal_volumen
+L 0x774B canal_vibrato
+L 0x7758 canal_vibrato_pon
+L 0x776B canal_nota_fin
+L 0x7773 canal_silencio            El canal C a cero; si los tres callan, se apaga todo
+C 0x7781 a cero
+C 0x779D quedan canales sonando?
+C 0x77A9 no: las peticiones a cero
+L 0x77A2 canal_silencio_mira
+L 0x77C8 canal_silencio_fin
+L 0x77CE canales_cuadro            Cada canal: baja la duracion; al acabar, la nota siguiente; si no, el vibrato
+C 0x77D1 canal A
+L 0x77D5 canal_cuadro
+C 0x77D9 la duracion
+C 0x77E1 parado
+C 0x77ED acabada: la siguiente
+C 0x77EF con vibrato?
+C 0x77FE su cuenta
+C 0x7809 de ida y vuelta?
+L 0x7819 canal_vibra
+L 0x781C canal_sig
+L 0x782A canales_fin
+L 0x782B canal_siguiente_nota      La nota siguiente esta 9 bytes despues; con el bit 7, una orden: fin o repetir
+C 0x7838 orden?
+C 0x783E la nota
+L 0x7858 canal_siguiente_a
+L 0x785F canal_orden
+C 0x785F bit 6: fin del canal
+L 0x786C canal_repite              Repite el tramo (puntero de 2 bytes) las veces de los 5 bits bajos
+L 0x787E canal_repite_fin
+L 0x7887 canal_vibrato_paso        Suma o resta el vibrato al tono del canal
+L 0x78A0 canal_vibrato_resta
+L 0x78A2 canal_vibrato_pon_tono
+L 0x78B5 mezclador                 El registro 7: los canales con tono y ruido de los tres juntos
+D 0x78CD 0x7925 sin_uso_salto_planta  CODIGO SIN USO (88 bytes): lleva al agente y la vista unas plantas arriba o abajo segun la tabla 0x7925 (una sola vez por 0xC36E). Nada salta a 0x78CD y en el cartucho no hay saltos indirectos
+D 0x7925 0x7937 sin_uso_salto_tabla  Su tabla: Y, fila y vista para cada caso
+B 0x7937 =====  Los sprites a la VRAM  =====
+L 0x7937 sprites_a_vram            Los 32 sprites a 0x3F00: un cuadro en orden, el siguiente al reves, para que parpadeen en vez de desaparecer
+C 0x7937 cuadro par o impar
+C 0x7941 al reves, en 0xDF80
+L 0x794C sprites_al_reves
+L 0x7958 sprites_en_orden
+L 0x7961 sprites_al_reves_fin
+L 0x7963 sprites_copia
+B 0x796D =====  El coche del sotano  =====
+L 0x796D coche_arranca             Guarda el trozo del mapa del sotano y anima el coche
+C 0x796F tres filas del mapa...
+C 0x7972 ...a 0xDF80
+L 0x7980 coche_anima               Los dibujos del coche a 0x2100/0x2900 y 7 pasos del coche saliendo
+C 0x7987 los dibujos
+L 0x79A7 coche_paso
+C 0x79A8 el trozo del paso
+C 0x79BF sus tres sprites
+D 0x79DD 0x7A31 coche_sprites     Los sprites del coche en cada paso (12 bytes)
+L 0x7A31 vuelca_y_espera           Vuelca el mapa y espera 8 cuadros
+L 0x7A3C vuelca_espera
+
+L 0x7A44 agente_al_coche           Fin de ronda: el agente anda hasta el coche, se sube y el coche se va
+C 0x7A4A la X del agente...
+C 0x7A4D ...en pasos de 4...
+C 0x7A51 ...menos 8: los pasos que le faltan
+C 0x7A54 mirando a la izquierda
+C 0x7A5B andando
+C 0x7A5E el sonido 0x0E
+C 0x7A67 los sprites a cero
+C 0x7A70 los del coche
+C 0x7A7B mirando a la derecha
+L 0x7A82 coche_avanza              25 pasos de 8 cuadros: el coche entra por la izquierda con el agente dentro
+C 0x7A86 el dibujo de las piernas
+C 0x7A8B hasta el paso 26
+C 0x7A90 el trozo del sotano...
+C 0x7A93 ...como estaba
+C 0x7A9E el coche...
+C 0x7AA1 ...un tile mas a la derecha
+C 0x7AAE las ruedas giran
+C 0x7AB8 desde el segundo paso...
+C 0x7ABD ...los sprites 8 a la derecha
+C 0x7AD2 desde el tercero...
+C 0x7AD7 ...el humo del tubo de escape
+L 0x7AC5 coche_sprites_avanzan
+L 0x7ACC coche_vuelca
+L 0x7AED coche_humo
+L 0x7AF5 coche_se_va               El coche, ya con el agente, sale por la derecha
+C 0x7AFC sin humo
+C 0x7B07 cinco sprites del agente en el coche
+L 0x7B13 coche_se_va_sprite
+L 0x7B26 coche_se_va_paso
+C 0x7B2B hasta que la cuenta llega a 0
+C 0x7B2F el sotano como estaba
+C 0x7B3C el coche...
+C 0x7B4C las ruedas
+C 0x7B54 los sprites, 8 a la izquierda
+L 0x7B5C coche_se_va_sprites
+L 0x7B6B coche_fin
+L 0x7B6E pon_bloque_mezcla         Pone el bloque HL (A filas de C) en DE; donde el bloque tiene 0 o el mapa no esta vacio, se mezcla (+0x20)
+L 0x7B6F pon_bloque_mezcla_fila
+L 0x7B72 pon_bloque_mezcla_tile
+C 0x7B76 tiles 0xE0 a 0xE7: tal cual
+C 0x7B7F encima de un vacio (0x3B)...
+C 0x7B84 ...0x70 pasa a 0x1B...
+C 0x7B8A ...y se le suma 0x20
+L 0x7B7E pon_bloque_mezcla_vacio
+L 0x7B8A pon_bloque_mezcla_suma
+L 0x7B8D pon_bloque_mezcla_sig
+L 0x7BA1 pon_bloque_ultima_fila
+L 0x7BA8 piernas_fuera             Dos bytes de los dibujos de las piernas a 0x204E y 0x285E: el agente sin piernas (tras el escalon o en el coche)
+L 0x7BAD piernas_dentro            Las piernas otra vez
+L 0x7BB0 piernas_al_vdp
+D 0x7BC9 0x7BD9 coche_resto       Restos sin leer de la tabla de sprites del coche
+D 0x7BD9 0x7BE3 coche_agente      El agente en el coche: 5 pares (Y, X)
+D 0x7BE3 0x7BEB coche_sprites_0   Los dos sprites del coche al entrar
+D 0x7BEB 0x7BF3 piernas_bytes     Los dos bytes de las piernas: sin y con
+D 0x7BF3 0x7C01 coche_trozos      Los 7 dibujos del coche entrando (puntero a cada uno)
+D 0x7C01 0x7C67 coche_trozos_d    Los dibujos: ancho, alto y tiles
+D 0x7C67 0x7D67 coche_dibujos     8 sprites de 16 x 16 del coche: humo y ruedas
+B 0x7D67 =====  Las luces y la lampara  =====
+L 0x7D67 luces_cuadro              Lampara rota: cae (0xC39B), y a los 10 cuadros el edificio se queda a oscuras 240 cuadros
+C 0x7D67 0xC385: 0 con luz, 1 rota, 2 cayendo, 3 a oscuras
+C 0x7D72 empieza a caer
+C 0x7D7B temporizador 0x1E: 10 cuadros
+L 0x7D83 luces_apaga
+C 0x7D90 los colores de oscuras
+C 0x7DA2 a oscuras...
+C 0x7DA7 ...240 cuadros
+L 0x7DAE luces_lampara
+C 0x7DAE la lampara cae?
+L 0x7DB6 luces_vuelven
+C 0x7DC3 los colores de la ronda
+C 0x7DD5 con luz
+L 0x7DDA lampara_cae               La lampara cae en 4 pasos de 16 cuadros, 8 pixeles cada uno (sprites 25 y 26)
+C 0x7DDE sus sprites
+C 0x7DE5 el primer paso?
+C 0x7DE9 temporizador 0x1F
+C 0x7DF2 el quinto: se acaba
+L 0x7DF9 lampara_empieza
+C 0x7E00 la Y de la bala que la rompio...
+C 0x7E07 de que lado
+C 0x7E0D X 0x48
+L 0x7E11 lampara_der
+C 0x7E11 X 0xA8
+L 0x7E13 lampara_sprites
+C 0x7E2F el sonido 0x0F
+L 0x7E36 lampara_paso
+L 0x7E47 lampara_paso_der
+L 0x7E49 lampara_paso_dibujo
+C 0x7E49 dos dibujos alternos
+L 0x7E53 lampara_paso_dibujo2
+L 0x7E55 lampara_paso_baja
+C 0x7E55 8 mas abajo
+L 0x7E75 lampara_paso_sig
+L 0x7E78 lampara_ret
+L 0x7E79 lampara_fin
+L 0x7E87 lampara_borra
+B 0x7E91 =====  El edificio  =====
+L 0x7E91 dibuja_edificio           El mapa entero del edificio: la antena y el tejado, las plantas (tabla 0x7F8D), el sotano y los numeros de planta
+C 0x7E91 las primeras filas, vacias
+C 0x7E9B la antena
+C 0x7EAC las piezas del edificio
+C 0x7EB2 una fila de suelo
+C 0x7EB5 dos filas de tejado (0x0A)
+C 0x7EBF la pared del sotano (0x6A)...
+C 0x7EC4 ...tres filas
+C 0x7ECD el numero 30 (tiles 0xB3, 0xB0)...
+L 0x7EC9 pared_sotano
+L 0x7EDD numero_planta             Los numeros de planta: decenas y unidades bajando de 6 en 6 filas
+C 0x7EDD 6 filas mas abajo
+C 0x7EE5 las plantas de la derecha
+L 0x7EE8 numeros_lado
+C 0x7EE8 hasta la 1
+L 0x7EF6 numeros_decena
+L 0x7EF9 numeros_unidad
+D 0x7F03 0x7F07 antena            La antena del tejado
+L 0x7F07 pon_piezas                Lista de piezas (cuantas veces, y cuantas y cuales); cada vuelta 5 filas mas abajo; 0xFF acaba
+L 0x7F08 pon_piezas_lista
+L 0x7F10 pon_piezas_vuelta
+L 0x7F12 pon_piezas_una
+L 0x7F2E pon_piezas_sig
+L 0x7F34 pon_piezas_fin
+L 0x7F36 fila_de_suelo             32 piezas de suelo (0x850E) y 5 filas mas abajo
+L 0x7F38 fila_de_suelo_sig
+L 0x7F46 pon_pieza                 Pone la pieza HL en DE y avanza DE su ancho
+L 0x7F51 pon_tira                  Pone en DE una pieza: ancho y filas hasta 0xFF
+L 0x7F5C pon_tira_fila
+L 0x7F6E pon_tira_fin
+D 0x7F72 0x7F8D sin_uso_pon_lista  CODIGO SIN USO (27 bytes): pone una lista de piezas con pon_tira. Nada salta a 0x7F72 y no hay saltos indirectos
+D 0x7F8D 0x83EE edificio_plantas  Las plantas del edificio: por tramo, cuantas veces se repite y las piezas que lleva
+D 0x83EE 0x850E edificio_piezas   Las piezas: ancho, alto y tiles
+D 0x850E 0x8516 pieza_suelo       La pieza de suelo
+D 0x8516 0x8D18 patrones_edificio Los 256 patrones del edificio (largo 0x0800 y los bytes): letras, cifras, paredes, puertas, ascensores
+D 0x8D18 0x8D38 colores_1         Colores de los patrones, rondas 1, 4, 7...
+D 0x8D38 0x8D58 colores_2         Rondas 2, 5, 8...
+D 0x8D58 0x8D78 colores_3         Rondas 3, 6, 9...
+D 0x8D78 0x8D98 colores_oscuras   Los de la luz apagada
+D 0x8D98 0x905A sprites_agente    Los sprites del agente (largo y bytes)
+D 0x905A 0x921C sprites_enemigo   Los del enemigo
+D 0x921C 0x925C sprites_resto     Balas, lampara y lo demas
+D 0x925C 0x949A sprites_agente_2  Los del agente que tapa la entrada por el cable
+D 0x949A 0x94AB txt_taito         "(C) TAITO 1985" del titulo
+D 0x94AB 0x94B9 txt_pulsa         "PUSH SPACE KEY"
+D 0x94B9 0x993E titulo_patrones   Los patrones del titulo, comprimidos
+D 0x993E 0x99AF titulo_colores    Sus colores, comprimidos
+D 0x99AF 0x9A8F titulo_sprites_d  Los dibujos de los sprites del titulo
+D 0x9A8F 0x9AB5 efectos_tabla     Los 19 efectos de sonido (0x00-0x12): donde esta la ficha de cada uno
+D 0x9AB5 0x9ABB musicas_tabla     La tabla de musicas (una sola, la 0x80) y el principio de las fichas de efectos
+
+# ---------------------------------------------------------------- el sonido y el final del cartucho
+D 0x9ABB 0x9AF0 efectos_fichas    19 efectos: prioridad y donde empiezan sus notas (3 bytes)
+D 0x9AF0 0x9AF4 musica_canales    La unica musica: sus canales B y C (el C a cero: solo suena uno)
+D 0x9AF4 0x9D9A efectos_notas     Las notas de los efectos: 9 bytes por nota (mezclador, vibrato, tono, volumen, envolvente, ruido, velocidad y duracion); 0x8n repite, 0xC0 acaba
+D 0x9D9A 0xA2F0 musica_notas      Las 151 notas de la musica de fondo, con sus repeticiones
+D 0xA2F0 0xB2EF copia_de_la_ram   Restos: una copia de la RAM del MSX de 0xF001 a 0xFFFF que se colo al grabar el cartucho (los ganchos, todos "ret", caen en 0xFD9A; las rutinas de slot, en 0xF380; las teclas de funcion "color", "auto", "goto", en 0xF87F)
+D 0xB2EF 0xB400 ceros             Ceros
+D 0xB400 0xC000 relleno_ff        Relleno: 0xFF hasta el final
+C 0x4E80 sus sprites, los primeros del buffer
+C 0x4E94 cuadro 1
+C 0x4E98 tres sprites
+C 0x4E9D puestos
+C 0x4EA3 los dos sprites fijos...
+C 0x4EA6 ...a los sprites 30 y 31
+C 0x4EA9 8 bytes
+C 0x4EAC copiados
+C 0x4EAE listo
+C 0x4EB7 se guarda A
+C 0x4EB9 0xC39A a cero
+C 0x4EBC A otra vez
+C 0x4EC9 no: nada
+C 0x4ED1 si: nada
+C 0x4ED6 7 cuadros
+C 0x4ED8 puesto
+C 0x4EDB los bits
+C 0x4EE0 si
+C 0x4EE4 si
+C 0x4EE9 si
+C 0x4EEE si
+C 0x4EF4 se ha subido?
+C 0x4EF5 si: listo
+C 0x4EFB 14 cuadros
+C 0x4EFD puesto
+C 0x4F00 la postura
+C 0x4F05 si
+C 0x4F09 si
+C 0x4F0D si
+C 0x4F0F ninguna: nada
+C 0x4F12 cuadro + 1
+C 0x4F18 el quinto?
+C 0x4F1A antes: sigue cayendo
+C 0x4F1C despues: fuera
+C 0x4F1E el quinto: quieto
+C 0x4F26 nada debajo: cae
+C 0x4F2C pintado
+C 0x4F31 + 16
+C 0x4F34 guardada
+C 0x4F37 pintado
+C 0x4F3A cuadro + 1
+C 0x4F3D cual?
+C 0x4F40 el noveno?
+C 0x4F42 antes: sigue
+C 0x4F45 despues: fuera
+C 0x4F48 sin el bit de aplastado
+C 0x4F4A habia otro?
+C 0x4F51 cuadro 1
+C 0x4F57 no
+C 0x4F59 si: quieto
+C 0x4F5C cuadro + 1
+C 0x4F5F cual?
+C 0x4F62 1 o 2?
+C 0x4F64 si: baja con el ascensor
+C 0x4F66 3 o 4?
+C 0x4F68 si: quieto
+C 0x4F6B el quinto: fuera
+C 0x4F71 no
+C 0x4F75 - 8
+C 0x4F78 guardada
+C 0x4F7E en HL
+C 0x4F81 se guarda
+C 0x4F83 el ascensor...
+C 0x4F84 ...en IX
+C 0x4F89 el agente
+C 0x4F8B pintado
+C 0x4F92 el ascensor...
+C 0x4F95 ...en HL
+C 0x4F9C no
+C 0x4FA4 no
+C 0x4FA9 listo
+C 0x4FAC cuadro + 1
+C 0x4FB4 no: sigue
+C 0x4FBA cuadro 1
+C 0x4FBE tres sprites
+C 0x4FC0 a moverse
+C 0x4FC4 el resultado...
+C 0x4FC5 ...a A'...
+C 0x4FC6 ...pasando por la pila
+C 0x4FC7 A otra vez
+C 0x4FC8 3 o 4: bajando
+C 0x4FCC - 16
+C 0x4FCF guardada
+C 0x4FD2 el cuadro de A'
+C 0x4FD5 si
+C 0x4FD9 la direccion
+C 0x4FDE no
+C 0x4FE4 no: nada
+C 0x4FE8 0xC39A = 0xFF
+C 0x4FEF corrige la X
+C 0x4FF3 no
+C 0x4FF5 ya?
+C 0x4FF9 si: nada
+C 0x4FFD 0xC39A = 0xFF
+C 0x5004 se guarda
+C 0x5008 a cual?
+C 0x500C la izquierda
+C 0x500E sin avance?
+C 0x500F si
+C 0x5011 a la derecha: nada
+C 0x5014 +4
+C 0x5016 corrige
+C 0x5018 sin avance?
+C 0x5019 a la izquierda: nada
+C 0x501C -4
+C 0x501E la X...
+C 0x5021 ...corregida
+C 0x5024 lo de antes
+C 0x5030 pared: no avanza
+C 0x5035 + avance
+C 0x5038 guardada
+C 0x503B el cuadro
+C 0x503E el primero otra vez?
+C 0x5040 no
+C 0x5046 al suelo
+C 0x504B no: pintado
+C 0x5051 nada debajo?
+C 0x5053 no: pintado
+C 0x5058 + 16
+C 0x505B guardada
+C 0x505E pintado
+C 0x5063 14 cuadros
+C 0x5065 puesto
+C 0x506B cual?
+C 0x506E el cuarto?
+C 0x5070 antes: la puerta se abre
+C 0x5072 despues: escondido
+C 0x5077 la puerta en HL
+C 0x507C se guarda
+C 0x507E la puerta...
+C 0x507F ...en IX
+C 0x508A se despliega
+C 0x508F pedido
+C 0x5092 el agente
+C 0x5098 de pie
+C 0x509C cuadro 1
+C 0x50A2 7 cuadros
+C 0x50A4 puesto
+C 0x50A7 al suelo
+C 0x50AA el septimo?
+C 0x50AC antes: la puerta
+C 0x50AE despues: escondido
+C 0x50B2 255 cuadros
+C 0x50B4 puesto
+C 0x50B7 listo
+C 0x50BA quieto en el cuadro 7
+C 0x50C0 la direccion
+C 0x50C6 en HL
+C 0x50CB si
+C 0x50D3 sale?
+C 0x50D5 el agente a la izquierda
+C 0x50DB pulsado: sale
+C 0x50DF han pasado?
+C 0x50E2 no: sigue escondido
+C 0x50E5 cuadro 1
+C 0x50E9 los dibujos del lado
+C 0x50EF listo
+C 0x50F4 pulsada?
+C 0x50F7 si
+C 0x50FB pulsado?
+C 0x50FE si
+C 0x5101 a cero
+C 0x5104 el mando
+C 0x510A no
+C 0x510B si: no salta
+C 0x510F apuntado
+C 0x5114 el sonido 4
+C 0x511B cuadro 1
+C 0x5125 la direccion
+C 0x5128 mira a la izquierda?
+C 0x512C si
+C 0x5130 si: salto largo
+C 0x5132 no: corto
+C 0x5134 izquierda?
+C 0x5136 si: salto largo
+C 0x513E no: salto en el sitio
+C 0x5140 mira a la izquierda?
+C 0x5144 si
+C 0x5148 4 al saltar
+C 0x514A guardado
+C 0x514C -8 por cuadro...
+C 0x514E ...-4 al saltar
+C 0x5150 el avance
+C 0x515A - 8
+C 0x515C guardada
+C 0x5162 si: pintado
+C 0x516A si: no avanza
+C 0x5170 0x8A?
+C 0x5172 antes: avanza
+C 0x5177 en el borde izquierdo...
+C 0x5179 no
+C 0x517D si: no avanza
+C 0x5180 la X...
+C 0x5183 ...+ C
+C 0x5184 guardada
+C 0x5187 pintado
+C 0x518C cursores o joystick
+C 0x518F se guarda
+C 0x5191 nada
+C 0x5195 derecha
+C 0x519B izquierda
+C 0x519D 8: arriba-izquierda
+C 0x519F 4, 5, 6: abajo
+C 0x51A5 no: los lados
+C 0x51A8 A=0: parado
+C 0x51AA A=1: abajo
+C 0x51B0 si
+C 0x51B6 si
+C 0x51B8 bits...
+C 0x51BA ...1 y 2
+C 0x51BF no: nada
+C 0x51C5 cuadro 1
+C 0x51C9 los lados
+C 0x51CB A=2: arriba
+C 0x51CD encima del techo?
+C 0x51D1 si
+C 0x51D3 en un ascensor?
+C 0x51D7 si
+C 0x51DD no: nada
+C 0x51E3 cuadro 1
+C 0x51E7 los lados
+C 0x51EC en HL
+C 0x51F1 libre: sube
+C 0x51F7 la direccion
+C 0x51FA si
+C 0x51FE 0 o 1: nada
+C 0x5200 hasta la 4?
+C 0x5202 si: derecha
+C 0x5208 no: nada
+C 0x520F cuadro 1
+C 0x5214 a cero
+C 0x5217 al suelo
+C 0x521E si: andar
+C 0x5220 la cuenta de la escalera...
+C 0x5221 ...a cero
+C 0x5227 mira a la izquierda
+C 0x522D gira
+C 0x522F ya mira a la derecha?
+C 0x5233 si: andar
+C 0x5235 la cuenta de la escalera...
+C 0x5236 ...a cero
+C 0x523C mira a la derecha
+C 0x5240 +4
+C 0x5242 la X...
+C 0x5245 ...corregida
+C 0x524F no: listo
+C 0x5251 de pie
+C 0x5255 cuadro 1
+C 0x5259 al suelo
+C 0x525B bits...
+C 0x525D ...1 y 2
+C 0x5262 ni de pie ni andando: nada
+C 0x5266 de pie: empieza
+C 0x526B + 1
+C 0x526C pasa de 2?
+C 0x526E no
+C 0x5270 1
+C 0x5272 guardado
+C 0x5277 pedido
+C 0x527A el paso
+C 0x527C andando
+C 0x5280 cuadro 2
+C 0x528A algo raro
+C 0x528F la Y
+C 0x5294 menos de 0x78
+C 0x5298 0x80 o mas
+C 0x529A en medio: nada
+C 0x529E bit 1: arriba
+C 0x52A0 pintado
+C 0x52A4 bit 1: abajo
+C 0x52A6 pintado
+C 0x52AA no
+C 0x52AC en el aire...
+C 0x52B0 ...cuadro 4, el de caer
+C 0x52B4 sin avance
+C 0x52B8 saltando
+C 0x52BC pintado
+C 0x52C0 ni eso: pintado
+C 0x52C6 no
+C 0x52CC si
+C 0x52D1 +8
+C 0x52D3 guardada
+C 0x52D6 pintado
+C 0x52DA pedido
+C 0x52E1 cuadro 1
+C 0x52F2 no
+C 0x52F7 puestos
+C 0x52F9 los dibujos de siempre
+C 0x5300 si: sin disparo
+C 0x5304 los bits 1...
+C 0x5306 ...y 4
+C 0x5308 en la postura?
+C 0x530B si
+C 0x5311 no
+C 0x5313 el cuadro
+C 0x5316 el segundo?
+C 0x5318 si
+C 0x531A el tercero?
+C 0x531C no
+C 0x5320 pulsada?
+C 0x5323 si
+C 0x5327 pulsado?
+C 0x532A si
+C 0x532D a cero
+C 0x5330 sin disparo
+C 0x5335 si?
+C 0x5336 si: nada
+C 0x5338 apuntado
+C 0x533A guardado
+C 0x5340 no: nada
+C 0x5343 A=0: la del agente
+C 0x5349 no?
+C 0x534A no: nada
+C 0x534C se borra
+C 0x534D el aviso
+C 0x5353 los dibujos
+C 0x5356 listo
+C 0x5357 los bits
+C 0x535C si: no
+C 0x5360 si: no
+C 0x5366 no
+C 0x536B no
+C 0x5371 si
+C 0x5377 no
+C 0x5379 entra
+C 0x537B el agente mira a la izquierda?
+C 0x537F si: no
+C 0x5383 en HL
+C 0x5384 guardada...
+C 0x5387 ...en +7/+8
+C 0x538E cuadro 4
+C 0x539B pedido
+C 0x539E Z: ha entrado
+C 0x539F listo
+C 0x53A1 NZ: no
+C 0x53A3 las banderas
+C 0x53A4 listo
+C 0x53B2 no
+C 0x53B7 no
+C 0x53B9 Z: esta
+C 0x53BA listo
+C 0x53BC 5 bytes
+C 0x53BF la siguiente
+C 0x53C1 las 58
+C 0x53C3 NZ: ninguna
+C 0x53C5 las banderas
+C 0x53C6 listo
+C 0x53C7 se guarda
+C 0x53C8 mira a la izquierda?
+C 0x53CC si
+C 0x53CE registro 6 = 4
+C 0x53D1 a escribir
+C 0x53D3 registro 6 = 5
+
+C 0x4014 interrupciones en modo 1: la BIOS en 0x38
+C 0x4016 la segunda mitad del cartucho en 0x8000
+C 0x4020 0xC000-0xEFFF a cero
+C 0x4026 GRAPHIC 1 con las tablas del juego
+C 0x402F a jugar
+C 0x4031 el agente en el ascensor de la planta
+C 0x403A al VDP
+C 0x403F 0xC0D6 = 1: la interrupcion trabaja
+C 0x4042 la musica (0x80, la unica)
+C 0x4044 pedida
+C 0x4047 el rotulo que se despliega, si hay
+C 0x404A el agente
+C 0x404D los enemigos
+C 0x4050 los ascensores
+C 0x4053 las balas
+C 0x4056 quien recibe un balazo
+C 0x4059 las luces y la lampara que cae
+C 0x405C la lampara y la patada
+C 0x4068 ya dada
+C 0x4069 si: nada
+C 0x4070 todavia no
+C 0x4075 +1
+C 0x4076 a las vidas
+C 0x407F bit 0: en juego
+C 0x4087 bit 0 de 0xC080
+C 0x408B otro cuadro
+C 0x408D se quita el aviso
+C 0x408F del sotano
+C 0x4092 silencio
+C 0x4095 fuera enemigos y balas
+C 0x4098 los sprites como estan
+C 0x40A3 no: al coche
+C 0x40AD tres sprites
+C 0x40AF ...pintado...
+C 0x40BE a ras: ya esta
+C 0x40C2 un escalon: tambien
+C 0x40C7 baja 8...
+C 0x40C9 ...y otra vez
+C 0x40CC hasta pisar
+C 0x40D2 cuadro 1
+C 0x40D6 el ascensor le baja hasta el coche
+C 0x40DE se guarda el agente
+C 0x40E9 ...una columna a la derecha...
+C 0x40F3 normal
+C 0x40F5 14 filas
+C 0x40F7 + 32 por fila
+C 0x40F8 B filas
+C 0x40FA alli va el rotulo
+C 0x40FE se despliega
+C 0x4101 un paso del rotulo (deja IX en su ficha)
+C 0x4104 bit 0: sigue desplegandose?
+C 0x4108 espera
+C 0x410A el ascensor
+C 0x411A en la 0...
+C 0x411B ...desplazamiento 0
+C 0x411D +32...
+C 0x411E ...por fila
+C 0x4122 0xC0D6 a cero
+C 0x4125 sin aviso del sotano
+C 0x412B al VDP
+C 0x4131 el coche se va con el agente
+C 0x413A 12 bytes
+C 0x413D copiados
+C 0x4144 menos de 10: tal cual
+C 0x4146 si no, 9
+C 0x4148 se guarda
+C 0x4149 a cifras
+C 0x414C la de las unidades...
+C 0x414F ...en vez del "1" de "1000"
+C 0x4155 en el sotano
+C 0x4158 se despliega
+C 0x415B el sonido 0x0A
+C 0x415D pedido
+C 0x4160 un paso del rotulo
+C 0x4163 sigue?
+C 0x4167 espera
+C 0x4169 la ronda
+C 0x416A cuantas veces
+C 0x416C la ultima la da el rotulo
+C 0x4171 sumados
+C 0x4174 la siguiente
+C 0x4179 de bucle
+C 0x417C el agente anda al coche
+C 0x417F no se juega
+C 0x4180 0xC0D6 = 0
+C 0x4186 al VDP
+C 0x418C desplazamiento 0xC0 (fila 6)
+C 0x4191 la fila
+C 0x4197 la siguiente
+C 0x4198 otro edificio
+C 0x41A1 de bucle
+C 0x41A4 cero
+C 0x41A8 los bits del scroll a cero
+C 0x41AE al VDP
+C 0x41B4 al VDP
+C 0x41BA cero?
+C 0x41BD una menos
+C 0x41BE guardada
+C 0x41C4 bit 6 de la Y del agente: pasada la mitad de la pantalla
+C 0x41C6 no: nada
+C 0x41CC la fila del scroll...
+C 0x41CF ...mas lo de antes...
+C 0x41D0 ...mas 3
+C 0x41D2 se guarda
+C 0x41D4 menos 6...
+C 0x41D6 ...hasta pasarse
+C 0x41D8 lo que sobra
+C 0x41D9 otra vez
+C 0x41DB el total...
+C 0x41DC ...menos el resto: multiplo de 6
+C 0x41DD la fila
+C 0x41E0 32 por fila
+C 0x41E6 cero?
+C 0x41EB la fila 6
+C 0x41F0 menos: bien
+C 0x41F2 la 156...
+C 0x41F4 ...como mucho
+C 0x41F7 + 32
+C 0x41F8 por fila
+C 0x41F9 hasta A
+C 0x41FF bit 7: volcar
+C 0x4201 el resto de bits a cero
+C 0x420D registro 6: los dibujos normales
+C 0x4210 las puertas a medias, cerradas
+C 0x4216 de bucle
+C 0x421C al VDP
+C 0x421F el agente vuelve a entrar
+C 0x4222 los bits de la partida
+C 0x4227 sin sprites
+C 0x422D al VDP
+C 0x4236 en la VRAM
+C 0x4239 pantalla encendida
+C 0x423C al VDP
+C 0x423F silencio...
+C 0x4244 pedido
+C 0x4247 la interrupcion trabaja
+C 0x4249 (el sonido suena)
+C 0x424F de bucle
+C 0x4252 cero
+C 0x4253 no se juega
+C 0x425F otra vez el titulo
+C 0x4270 los graficos de la ronda
+C 0x4273 el mapa del edificio
+C 0x4276 los 11 ascensores
+C 0x4279 las 58 puertas y las rojas
+C 0x4280 en la fila 0...
+C 0x4284 ...y su recorrido empieza ahi
+C 0x428D bit 7: volcar
+C 0x428F el resto a cero
+C 0x4295 al VDP
+C 0x429A 0xC0D6 = 1
+C 0x42A0 la 1?
+C 0x42A5 el agente en la azotea
+C 0x42AB de bucle
+C 0x42B4 andando
+C 0x42BA de bucle
+C 0x42C2 si: a la azotea
+C 0x42C7 bit 6: el scroll baja
+C 0x42C9 una fila
+C 0x42CC otra vez
+C 0x42F9 temporizador 11, el del ascensor 0...
+C 0x42FB ...120 cuadros quieto
+C 0x42FD puesto
+C 0x4300 listo
+C 0x4301 los 11 ascensores
+C 0x4305 11
+C 0x4307 de 10 bytes
+C 0x430F guardado
+C 0x4312 el siguiente
+C 0x4314 los 11
+C 0x4316 listo
+C 0x4317 los 11 ascensores
+C 0x431B de 10 bytes
+C 0x431E 11
+C 0x4320 bit 5: el del sotano?
+C 0x4324 encontrado
+C 0x4326 el siguiente
+C 0x4328 los 11
+C 0x432A IX
+C 0x432F se guarda la cuenta
+C 0x4333 +1
+C 0x4334 pasa de 2?
+C 0x4336 no
+C 0x4338 vuelve a 1
+C 0x433A el cuadro
+C 0x433D 4 pixeles
+C 0x4342 en el buffer
+C 0x4346 los tres
+C 0x434F la cuenta
+C 0x4350 B pasos
+C 0x4352 listo
+C 0x4356 puestos
+C 0x4361 un paso cada 300 vueltas
+C 0x4364 de bucle
+C 0x4367 la cabina baja una fila
+C 0x436A se guarda
+C 0x436C el agente
+C 0x4375 guardada
+C 0x4378 se guarda
+C 0x4379 tres sprites
+C 0x437F pintados
+C 0x4382 la Y
+C 0x4383 el ascensor
+C 0x4387 otra fila
+C 0x4389 el ascensor ya no lleva al agente
+C 0x438D listo
+C 0x4394 de 5 bytes
+C 0x4397 bit 6: roja?
+C 0x439B si: queda
+C 0x439D la siguiente
+C 0x439F las 58
+C 0x43A1 Z: ninguna
+C 0x43A2 listo
+C 0x43A4 NZ: queda alguna
+C 0x43A6 las banderas
+C 0x43A7 listo
+C 0x43C4 no
+C 0x43C6 el agente
+C 0x43C9 hecho
+C 0x43CB a volcar
+C 0x43CF si
+C 0x43D1 no: a volcar
+C 0x43D6 no se ha podido
+C 0x43DD si: nada mas
+C 0x43E6 el sonido 0...
+C 0x43E8 ...el del ascensor
+C 0x43ED el bit 6 hecho
+C 0x43EF listo
+C 0x43F0 se guarda
+C 0x43F3 no: baja
+C 0x43F9 a mover
+C 0x4409 + C
+C 0x440A guardada
+C 0x440D 0xC0D0
+C 0x440E listo
+C 0x440F se guardan
+C 0x4416 bit 0 = 0: baja
+C 0x4418 el desplazamiento...
+C 0x441B ...menos una fila
+C 0x441F resta
+C 0x4424 guardado
+C 0x442A una menos
+C 0x442D se guarda Z
+C 0x442E suman 8
+C 0x4431 Z
+C 0x4432 listo
+C 0x4434 el desplazamiento...
+C 0x4437 ...mas una fila
+C 0x443A suma
+C 0x443B guardado
+C 0x443E la fila
+C 0x4444 se ha pasado?
+C 0x444E de 10 bytes
+C 0x4451 los 11
+C 0x4454 los bits 5 y 7...
+C 0x4458 si: al sotano
+C 0x445A el siguiente
+C 0x445B los 11
+C 0x445F la fila otra vez
+C 0x4460 y se deshace
+C 0x4462 los registros
+C 0x4467 avisado
+C 0x446C 0x1680...
+C 0x4470 ...igual?
+C 0x4472 si: listo
+C 0x4477 guardado
+C 0x447D 8 mas
+C 0x447F guardada
+C 0x4482 listo
+C 0x4486 los objetos
+C 0x4489 Z
+C 0x448A las banderas
+C 0x448B se recuperan
+C 0x448D listo
+C 0x4492 4
+C 0x4494 de 10 bytes
+C 0x4497 suman C
+C 0x449E 3
+C 0x44A0 de 10 bytes
+C 0x44A3 suman C
+C 0x44AA 4
+C 0x44AC de 10 bytes
+C 0x44AF suman C
+C 0x44B5 cero?
+C 0x44B6 no hay
+C 0x44BA + C
+C 0x44BB las dos mitades
+C 0x44C1 listo
+C 0x44C6 no: la siguiente
+C 0x44C8 la Y...
+C 0x44CB ...+ C
+C 0x44CF la siguiente
+C 0x44D1 las B
+C 0x44D3 listo
+C 0x44E0 no: nada
+C 0x44E7 si: ya los pone la escalera
+C 0x44F8 la cuenta
+C 0x44FF no: escondidos
+C 0x4510 no
+C 0x4521 los B
+C 0x4523 la cuenta
+C 0x4524 10 bytes
+C 0x4527 el siguiente
+C 0x4529 los 4
+C 0x452F sprite 11
+C 0x4533 3
+C 0x4535 la cuenta
+C 0x4536 un sprite
+C 0x4538 en juego?
+C 0x453C no
+C 0x453E pintada
+C 0x4541 la siguiente
+C 0x4546 10 bytes
+C 0x4549 la siguiente
+C 0x454B la cuenta
+C 0x454C las 3
+C 0x4552 sprite 14
+C 0x4556 4
+C 0x4558 la cuenta
+C 0x4559 un sprite
+C 0x455B en juego?
+C 0x455F no
+C 0x4561 pintada
+C 0x4564 la siguiente
+C 0x4566 escondida
+C 0x4569 10 bytes
+C 0x456C la siguiente
+C 0x456E la cuenta
+C 0x456F las 4
+C 0x4571 listo
+C 0x4575 al VDP
+C 0x457B NAMBAS de GRAPHIC 1
+C 0x4581 la de colores
+C 0x4587 la de patrones
+C 0x458D la de atributos
+C 0x4593 la de dibujos
+C 0x4599 listo
+C 0x459E 4
+C 0x45A0 de 10 bytes
+C 0x45A7 no
+C 0x45B1 no
+C 0x45BB el siguiente
+C 0x45BD los 4
+C 0x45C3 3
+C 0x45C5 de 10 bytes
+C 0x45C8 en juego?
+C 0x45CC no
+C 0x45CE fuera
+C 0x45D2 la siguiente
+C 0x45D4 las 3
+C 0x45DA 4
+C 0x45DC de 10 bytes
+C 0x45DF en juego?
+C 0x45E3 no
+C 0x45E5 fuera
+C 0x45E9 la siguiente
+C 0x45EB las 4
+C 0x45ED listo
+C 0x45F1 128
+C 0x45F4 ceros
+C 0x45F5 en RAM
+C 0x45F9 en la VRAM
+C 0x45FC listo
+
+C 0x45FE registro 1 = 0x82: sin imagen
+C 0x4601 al VDP
+C 0x4605 sin avisos
+C 0x4608 la vida extra sin dar
+C 0x460D la ronda
+C 0x4612 las vidas de reserva
+C 0x4618 cero?
+C 0x4619 no: se conserva
+C 0x461D 7 cifras
+C 0x461F de los puntos...
+C 0x4622 ...a "0"
+C 0x4628 al record
+C 0x462B 7 cifras
+C 0x462E copiado
+C 0x4631 a cero
+C 0x4637 a la tabla de colores
+C 0x463A 32 grupos de 8 patrones
+C 0x463D LDIRVM
+C 0x4642 7 cifras
+C 0x4644 los puntos
+C 0x4647 a "0"
+C 0x464D bit 1 de 0xC080 a cero
+C 0x464F listo
+C 0x4657 se guardan
+C 0x4659 8 bits
+C 0x465F los 8
+C 0x4661 el byte al reves
+C 0x4662 el siguiente
+C 0x4663 uno menos
+C 0x4665 quedan?
+C 0x4666 si
+C 0x4668 se recuperan
+C 0x466A listo
+C 0x466B la cuenta
+C 0x4672 B sprites
+C 0x4675 la cuenta
+C 0x467C B sprites
+C 0x467F listo
+C 0x4680 la cuenta
+C 0x4681 16 bytes...
+C 0x4684 ...copiados
+C 0x4686 y 16 de salto...
+C 0x4689 ...en el origen...
+C 0x468B ...y en el destino
+C 0x468D la cuenta
+C 0x468E los B
+C 0x4690 listo
+C 0x4691 sin interrupciones
+C 0x4698 0xC0D6-0xC3A2 a cero
+C 0x469F 0xC400...
+C 0x46A2 ...7 KB...
+C 0x46A5 ...a cero
+C 0x46AB a 0xE000
+C 0x46AE copiados
+C 0x46B4 la tabla de patrones
+C 0x46B7 2 KB
+C 0x46BA LDIRVM
+C 0x46C0 a 0xE000
+C 0x46C3 copiados
+C 0x46C9 la tabla de dibujos de sprites
+C 0x46CC 22 sprites de 32 bytes
+C 0x46CF LDIRVM
+C 0x46D5 sus 0x2C0 bytes
+C 0x46D8 al reves
+C 0x46DD y las mitades cambiadas a 0xE800
+C 0x46E3 la segunda tabla de dibujos (registro 6 = 5)
+C 0x46E6 0x2C0 bytes
+C 0x46E9 LDIRVM
+C 0x46EF a 0xE000
+C 0x46F2 copiados
+C 0x46F8 detras de los del agente...
+C 0x46FB ...14 sprites
+C 0x46FE LDIRVM
+C 0x4704 y en la segunda tabla
+C 0x4707 0x1C0 bytes
+C 0x470A LDIRVM
+C 0x4710 0x1C0 bytes
+C 0x4713 al reves
+C 0x4718 mitades cambiadas
+C 0x471E los del enemigo mirando a la izquierda...
+C 0x4721 0x1C0 bytes
+C 0x4724 LDIRVM
+C 0x4727 los mismos...
+C 0x472A ...en la segunda tabla
+C 0x472D 0x1C0 bytes
+C 0x4730 LDIRVM
+C 0x4736 a 0xE000
+C 0x4739 copiados
+C 0x473F detras de los del enemigo
+C 0x4742 0x1C0 bytes
+C 0x4745 LDIRVM
+C 0x474B en la segunda tabla...
+C 0x474E ...0x9C0 bytes: hasta 0x3800, con lo que hubiera en 0xE1C0 y siguientes
+C 0x4751 LDIRVM
+C 0x4756 a cero
+C 0x475C al VDP
+C 0x4762 al VDP
+C 0x4768 cero
+C 0x4769 sin avisos
+C 0x476F 4 bytes
+C 0x4771 a cero
+C 0x4772 0xC0D0-0xC0D3
+C 0x4778 bit 7: volcar
+C 0x477A silencio
+C 0x477D los 50 temporizadores a cero
+C 0x4783 se guarda
+C 0x4786 menos: 4 - ronda
+C 0x478A guardada
+C 0x478C la ronda
+C 0x478D 4...
+C 0x478F ...menos la ronda
+C 0x4796 la ronda
+C 0x4797 se guarda otra vez
+C 0x4798 ronda - 1...
+C 0x4799 ...1, 4, 7...
+C 0x479B ...- 1...
+C 0x479C ...2, 5, 8...
+C 0x479E ...- 1...
+C 0x479F ...3, 6, 9...
+C 0x47A1 y otra vuelta
+C 0x47A3 los colores 1
+C 0x47A6 puestos
+C 0x47A8 los colores 2
+C 0x47AB puestos
+C 0x47AD los colores 3
+C 0x47B6 32 bytes
+C 0x47B9 LDIRVM
+C 0x47BC la ronda
+C 0x47BD 100 o mas?
+C 0x47BF no
+C 0x47C1 - 100
+C 0x47C3 otra vez
+C 0x47CE dos cifras
+C 0x47D1 LDIRVM
+C 0x47D7 en la fila de abajo
+C 0x47DA 5 letras
+C 0x47DD LDIRVM
+C 0x47E0 listo
+C 0x47E9 en la VRAM
+C 0x47F5 a la derecha de la fila 1
+C 0x47F8 7 cifras
+C 0x47FB LDIRVM
+C 0x4801 a letras
+C 0x4804 de 0xC339...
+C 0x4807 ...a la izquierda de la fila 1
+C 0x480A 7 cifras
+C 0x480D LDIRVM
+C 0x4810 listo
+C 0x4828 la tabla de nombres...
+C 0x482B ...768...
+C 0x482E ...del patron vacio
+C 0x4830 FILVRM
+C 0x4833 listo
+C 0x4834 el final...
+C 0x4837 ...menos el principio...
+C 0x483B ...es el largo
+C 0x483D a BC
+C 0x483F desde 0xC0D6
+C 0x4842 ceros
+C 0x4843 a cero
+C 0x4846 listo
+C 0x4847 8 registros
+C 0x4849 desde el 0
+C 0x484B se guarda la cuenta
+C 0x484C el valor
+C 0x484D al VDP
+C 0x4850 la cuenta
+C 0x4851 el siguiente valor
+C 0x4852 el siguiente registro
+C 0x4853 los 8
+C 0x4855 listo
+C 0x485F al byte alto
+C 0x4860 la posicion en DE
+C 0x4861 el siguiente byte
+C 0x4864 se acabo
+C 0x4865 se guarda
+C 0x4869 + 0x1000
+C 0x486A en DE
+C 0x486B el texto
+C 0x486D las letras
+C 0x486E BC = largo
+C 0x4870 se guardan
+C 0x4871 y el largo
+C 0x4875 el largo
+C 0x4876 las letras
+C 0x4877 tras ellas
+C 0x4878 el siguiente
+C 0x487A la tabla de zonas
+C 0x487E por 4
+C 0x4884 la zona
+C 0x4885 el largo
+C 0x4888 la direccion
+C 0x488D ceros
+C 0x488E FILVRM
+C 0x4891 listo
+C 0x48A7 cero?
+C 0x48A8 no
+C 0x48AD sin los bits de modo
+C 0x48AF + B
+C 0x48B0 RG0SAV
+C 0x48B3 el valor
+C 0x48B4 a escribir
+C 0x48B8 no: tal cual
+C 0x48BB RG1SAV
+C 0x48C1 listo
+C 0x48C2 un byte
+C 0x48C3 el siguiente
+C 0x48C4 los B
+C 0x48C6 listo
+C 0x48C7 el primero lo pone el ld
+C 0x48C8 HL...
+C 0x48C9 ...a DE...
+C 0x48CA ...+1
+C 0x48CB el primero
+C 0x48CC y los demas copiandolo
+C 0x48CE listo
+C 0x48CF se guarda todo
+C 0x48D8 GTSTCK
+C 0x48DC si
+C 0x48E1 la respuesta
+C 0x48E6 la respuesta
+C 0x48E9 GTSTCK 0
+C 0x48EC algo?
+C 0x48ED si
+C 0x48F1 GTSTCK 1
+C 0x48F4 Z si nada
+C 0x48F5 se recupera todo
+C 0x48FC listo
+C 0x48FD la tabla de teclas
+C 0x4900 esta?
+C 0x4901 si
+C 0x4904 fin de tabla?
+C 0x4906 si: Z
+C 0x4908 la tecla
+C 0x4909 la siguiente...
+C 0x490C ...de 3 bytes
+C 0x490E la fila
+C 0x490F de la matriz
+C 0x4914 el bit
+C 0x4915 NZ si pulsada
+C 0x4916 listo
+C 0x4921 al VDP
+C 0x4924 silencio
+C 0x492A NAMBAS
+C 0x4930 COLBAS
+C 0x4936 CGPBAS
+C 0x493C ATRBAS
+C 0x4942 PATBAS
+C 0x4947 jp...
+C 0x494D ...0x4C92
+C 0x4956 registro 1 = 0x82: sin imagen
+C 0x4959 al VDP
+C 0x495F al VDP
+C 0x4965 12 KB
+C 0x4968 ceros
+C 0x4969 a cero
+C 0x496F 16 KB
+C 0x497B a 0xE000
+C 0x4984 tercio de arriba
+C 0x4987 del medio
+C 0x498A LDIRVM
+C 0x498D de abajo
+C 0x4990 LDIRVM
+C 0x4996 a 0xE000
+C 0x4999 descomprimidos
+C 0x499F tercio de arriba
+C 0x49A2 del medio
+C 0x49A5 LDIRVM
+C 0x49A8 de abajo
+C 0x49AB LDIRVM
+C 0x49B1 a la tabla de dibujos
+C 0x49B4 7 sprites
+C 0x49B7 LDIRVM
+C 0x49BD 8
+C 0x49C0 postura 1
+C 0x49C2 todas
+C 0x49CB 17 bytes
+C 0x49CE copiados
+C 0x49D3 en marcha
+C 0x49D6 la cuenta
+C 0x49D8 0xC359...
+C 0x49DC a DE
+C 0x49DD 16 bytes
+C 0x49E0 copiados
+C 0x49E5 a 0xC36F
+C 0x49E8 8 letras
+C 0x49EA la primera espera...
+C 0x49EB ...de cada letra
+C 0x49F0 la siguiente
+C 0x49F1 las 8
+C 0x49F6 al VDP
+C 0x49F9 los bits del titulo
+C 0x49FC paso pedido por la interrupcion?
+C 0x49FE espera
+C 0x4A04 se hace
+C 0x4A06 las posiciones...
+C 0x4A07 ...en 0xC359
+C 0x4A08 se guardan
+C 0x4A0C 23 filas
+C 0x4A0F ceros
+C 0x4A10 a cero
+C 0x4A16 1,5 KB
+C 0x4A19 a cero
+C 0x4A1C las posiciones
+C 0x4A20 la otra mitad
+C 0x4A22 guardada
+C 0x4A27 la cuenta
+C 0x4A28 las posiciones
+C 0x4A29 el numero de letra...
+C 0x4A2B ...es 8 - B
+C 0x4A2F par?
+C 0x4A31 si
+C 0x4A36 la letra
+C 0x4A37 en BC
+C 0x4A39 se guarda
+C 0x4A3D su espera
+C 0x4A3E cuanto?
+C 0x4A3F parada?
+C 0x4A40 si: se mueve igual
+C 0x4A43 aun no: se mueve
+C 0x4A45 se guarda
+C 0x4A49 su postura...
+C 0x4A4A ...+1
+C 0x4A4B cual?
+C 0x4A4C en B
+C 0x4A4F no: la espera de la siguiente
+C 0x4A53 de vuelta a 0
+C 0x4A55 la espera...
+C 0x4A56 ...se guarda...
+C 0x4A57 ...a cero: parada
+C 0x4A5B es la 1?
+C 0x4A5C no
+C 0x4A61 bit 5: acabado
+C 0x4A63 a los rotulos
+C 0x4A66 las esperas
+C 0x4A69 4 por letra
+C 0x4A6D la postura - 1
+C 0x4A6F + letra x 4
+C 0x4A71 en BC
+C 0x4A73 la entrada
+C 0x4A74 la espera
+C 0x4A75 su sitio
+C 0x4A76 guardada
+C 0x4A77 la letra
+C 0x4A78 se guarda
+C 0x4A7C su postura
+C 0x4A7D cual?
+C 0x4A7E - 1
+C 0x4A7F x 2
+C 0x4A80 en C
+C 0x4A84 la mitad 0?
+C 0x4A85 si
+C 0x4A87 la otra
+C 0x4A88 la tabla de pasos
+C 0x4A89 la entrada
+C 0x4A8A lo que avanza
+C 0x4A8B la letra
+C 0x4A8C x 2
+C 0x4A8E las posiciones
+C 0x4A8F se guardan
+C 0x4A90 la de esta letra
+C 0x4A91 baja
+C 0x4A93 alta
+C 0x4A94 el avance
+C 0x4A95 la posicion en HL
+C 0x4A98 adelante
+C 0x4A9A atras: B = 0xFF
+C 0x4A9B se suma
+C 0x4A9C en DE
+C 0x4A9D guardada
+C 0x4AA3 las posiciones
+C 0x4AA4 la cuenta
+C 0x4AA5 el dibujo de la siguiente
+C 0x4AA9 una menos
+C 0x4AAA las 8
+C 0x4AB3 23 filas
+C 0x4AB6 copiadas
+C 0x4ABB bit 6
+C 0x4ABF no: otro paso
+C 0x4AC3 lo de la pila
+C 0x4AC6 la cuenta de rotulos...
+C 0x4AC8 ...a cero
+C 0x4ACD 256 bytes
+C 0x4AD0 a cero
+C 0x4AD3 los bits del titulo
+C 0x4AD6 paso pedido?
+C 0x4AD8 espera
+C 0x4ADA se hace
+C 0x4ADC la cuenta...
+C 0x4ADD ...de rotulos
+C 0x4ADF +1
+C 0x4AE0 x 2
+C 0x4AE2 en BC
+C 0x4AE7 la entrada
+C 0x4AE8 el puntero...
+C 0x4AEA ...al rotulo
+C 0x4AED +1
+C 0x4AEF +2
+C 0x4AF2 en E
+C 0x4AF3 se guarda
+C 0x4AF4 la zona de los rotulos
+C 0x4AF7 + posicion
+C 0x4AF8 a DE
+C 0x4AF9 el rotulo
+C 0x4AFA el origen
+C 0x4AFB el alto
+C 0x4AFD el byte alto del origen
+C 0x4AFE el origen en HL
+C 0x4B00 el alto
+C 0x4B07 la cuenta
+C 0x4B08 0xC357
+C 0x4B0A el sexto?
+C 0x4B0C si: a esperar la tecla
+C 0x4B10 el siguiente
+C 0x4B14 volcado?
+C 0x4B16 espera
+C 0x4B1A la cuenta...
+C 0x4B1C ...a cero
+C 0x4B1E la barra (GTTRIG 0)
+C 0x4B22 pulsada: empieza
+C 0x4B26 el boton 1
+C 0x4B29 pulsado: empieza
+C 0x4B2E toca parpadear?
+C 0x4B30 no
+C 0x4B32 se guarda
+C 0x4B36 14 letras
+C 0x4B39 en blanco
+C 0x4B3A borradas
+C 0x4B3D 0xC357
+C 0x4B3E se guarda
+C 0x4B3F la cuenta...
+C 0x4B43 ...alterna
+C 0x4B44 guardada
+C 0x4B45 0: borrado
+C 0x4B4A en su fila
+C 0x4B4D 14 letras
+C 0x4B50 copiadas
+C 0x4B52 0xC357
+C 0x4B53 hecho
+C 0x4B55 a volcar
+C 0x4B57 otra vez
+C 0x4B5F cero?
+C 0x4B60 espera
+C 0x4B62 no se juega
+C 0x4B65 sin interrupciones
+C 0x4B66 listo
+C 0x4B67 la zona de montaje...
+C 0x4B6A ...+ DE
+C 0x4B6B la posicion...
+C 0x4B6E ...de la letra
+C 0x4B71 el origen en HL
+C 0x4B72 2 de ancho
+C 0x4B75 4 de alto
+C 0x4B77 el ancho
+C 0x4B78 el destino
+C 0x4B79 una fila
+C 0x4B7B el destino
+C 0x4B7D + 32
+C 0x4B81 en DE
+C 0x4B82 el ancho
+C 0x4B83 una menos
+C 0x4B84 las A
+C 0x4B86 listo
+C 0x4B87 de 0xE000
+C 0x4B8A 2 KB
+C 0x4B8D LDIRVM
+C 0x4B90 listo
+C 0x4C26 sin interrupciones
+C 0x4C2A no se juega...
+C 0x4C2B ...solo los temporizadores
+C 0x4C30 al VDP
+C 0x4C36 +1
+C 0x4C37 de 0 a 1
+C 0x4C39 guardado
+C 0x4C3C 1: a trabajar
+C 0x4C3F a cero
+C 0x4C42 solo el reloj
+C 0x4C44 los sprites a la VRAM
+C 0x4C4A los puntos y las vidas
+C 0x4C4D el sonido
+C 0x4C50 registro 1 = 0xE2: imagen e interrupcion
+C 0x4C53 al VDP
+C 0x4C59 ya?
+C 0x4C5A si: nada
+C 0x4C5F +1
+C 0x4C60 sin desbordar: nada
+C 0x4C63 +1
+C 0x4C66 llega?
+C 0x4C67 no
+C 0x4C6C sin interrupciones
+C 0x4C70 cero
+C 0x4C71 la cuenta par/impar a cero
+C 0x4C74 interrupciones
+C 0x4C75 listo
+C 0x4C76 los bits del scroll
+C 0x4C79 bit 7: volcar?
+C 0x4C7B no
+C 0x4C7C hecho
+C 0x4C7E guardado
+C 0x4C87 + 0xC400
+C 0x4C8E LDIRVM
+C 0x4C91 listo
+C 0x4C97 si
+C 0x4C9C si
+C 0x4CA0 no
+C 0x4CA2 hecho
+C 0x4CA4 se guarda
+C 0x4CA8 la tabla de nombres del titulo
+C 0x4CAB 768
+C 0x4CAE LDIRVM
+C 0x4CB1 0xC357
+C 0x4CB4 si
+C 0x4CB7 cuenta - 1
+C 0x4CB8 no toca
+C 0x4CB9 otros 5
+C 0x4CBB 0xC357
+C 0x4CBE listo
+C 0x4CBF animacion acabada...
+C 0x4CC1 ...a los rotulos
+C 0x4CC3 la cuenta...
+C 0x4CC4 ...a 15
+C 0x4CC6 0xC357
+C 0x4CC7 la cuenta
+C 0x4CC9 no toca
+C 0x4CCB otros 15
+C 0x4CCD 0xC357
+C 0x4CD0 la cuenta
+C 0x4CD1 0xC357
+C 0x4CD2 volcar?
+C 0x4CD4 no
+C 0x4CD6 hecho
+C 0x4CD8 se guarda
+C 0x4CDC filas 11 a 18 de la pantalla
+C 0x4CDF 256 bytes
+C 0x4CE2 LDIRVM
+C 0x4CE5 0xC357
+C 0x4CE6 se guarda
+C 0x4CE7 la cuenta...
+C 0x4CE8 ...de rotulos
+C 0x4CEA el quinto?
+C 0x4CEC no
+C 0x4CF1 sprites 5 y 6
+C 0x4CF4 8 bytes
+C 0x4CF7 LDIRVM
+C 0x4CFA 0xC357
+C 0x4CFD no
+C 0x4CFE la cuenta...
+C 0x4CFF ...a 30
+C 0x4D04 desde el sprite 0
+C 0x4D07 7 sprites
+C 0x4D0A LDIRVM
+C 0x4D0D listo
+C 0x4D10 no
+C 0x4D16 jp...
+C 0x4D19 ...0x4C26
+C 0x4D1C en H.TIMI
+C 0x4D1F listo
+C 0x4D20 toca volcar?
+C 0x4D22 no
+C 0x4D24 hecho
+C 0x4D26 se guarda
+C 0x4D2A en su sitio
+C 0x4D2D 14 letras
+C 0x4D30 LDIRVM
+C 0x4D33 0xC357
+C 0x4D34 la cuenta
+C 0x4D35 - 1
+C 0x4D36 no toca
+C 0x4D39 0xC357
+C 0x4D3A bit 7: toca parpadear
+C 0x4D3C listo
+C 0x4D5C slot 0
+C 0x4D5E expandido?
+C 0x4D5F con el numero
+C 0x4D60 en C
+C 0x4D61 se guarda
+C 0x4D65 DE = sus dos primeros bytes
+C 0x4D68 se guarda
+C 0x4D6C DCOMPR
+C 0x4D6D la direccion
+C 0x4D6E no
+C 0x4D76 DCOMPR
+C 0x4D77 no
+C 0x4D7C los dos bytes
+C 0x4D82 DCOMPR
+C 0x4D85 el slot
+C 0x4D86 expandido?
+C 0x4D8C el subslot
+C 0x4D8D quedan?
+C 0x4D8F si
+C 0x4D91 el primario
+C 0x4D93 en C
+C 0x4D94 EXPTBL
+C 0x4D95 el siguiente
+C 0x4D96 el slot siguiente
+C 0x4D97 cual?
+C 0x4D98 hasta el 3
+C 0x4D9A quedan
+C 0x4D9C no esta: se vuelve
+C 0x4D9D listo
+C 0x4D9E el slot
+C 0x4DA5 ENASLT
+C 0x4DA8 lo de la pila
+C 0x4DA9 listo
+C 0x4DAA el primero
+C 0x4DAD en E
+C 0x4DAE el slot
+C 0x4DAF se guardan
+C 0x4DB4 se recuperan
+C 0x4DB5 el slot
+C 0x4DB6 el byte en D
+C 0x4DB7 el siguiente
+C 0x4DB8 listo
+C 0x4DB9 0xC09E
+C 0x4DBC 50
+C 0x4DBE ceros
+C 0x4DBF a cero
+C 0x4DC2 listo
+C 0x4DC3 se guardan
+C 0x4DC5 0xC09E
+C 0x4DC8 50
+C 0x4DCA cuanto le queda?
+C 0x4DCB cero?
+C 0x4DCC si: nada
+C 0x4DCE - 1
+C 0x4DCF el siguiente
+C 0x4DD0 los 50
+C 0x4DD2 se recuperan
+C 0x4DD4 listo
+C 0x4DD5 se guardan
+C 0x4DD7 el numero...
+C 0x4DD8 ...en DE
+C 0x4DDA la tabla
+C 0x4DDD + numero
+C 0x4DDE = B
+C 0x4DDF se recuperan
+C 0x4DE1 listo
+C 0x4DE2 se guardan
+C 0x4DE4 el numero...
+C 0x4DE5 ...en DE
+C 0x4DE7 la tabla
+C 0x4DEA + numero
+C 0x4DEB cuanto le queda
+C 0x4DEC NZ si algo
+C 0x4DED se recuperan
+C 0x4DEF listo
+C 0x4DF0 el divisor
+C 0x4DF1 cero?
+C 0x4DF2 si: nada
+C 0x4DF3 resto 0
+C 0x4DF4 cociente 0
+C 0x4DF5 8 bits
+C 0x4DF7 un bit del dividendo...
+C 0x4DF9 ...al resto
+C 0x4DFA el cociente, un bit
+C 0x4DFC cabe?
+C 0x4DFD si
+C 0x4DFF los 8
+C 0x4E01 listo
+C 0x4E02 se resta...
+C 0x4E03 ...y un 1 en el cociente
+C 0x4E04 sigue
+C 0x4E41 se guarda
+C 0x4E42 el tope en B
+C 0x4E46 en C
+C 0x4E49 / 2
+C 0x4E4B + semilla
+C 0x4E4C x 2: el bit 7 al acarreo
+C 0x4E4E con acarreo
+C 0x4E50 bit 3?
+C 0x4E52 si: 1
+C 0x4E54 no: 0
+C 0x4E56 bit 3?
+C 0x4E58 si: 0
+C 0x4E5A el bit 0 a 1
+C 0x4E5C guardado
+C 0x4E5E el bit 0 a 0
+C 0x4E60 la semilla nueva
+C 0x4E63 cabe?
+C 0x4E64 si
+C 0x4E66 - tope
+C 0x4E67 otra vez
+C 0x4E69 de 1 a B
+C 0x4E6A se recupera
+C 0x4E6B listo
+C 0x4E6C se guarda
+C 0x4E6D 100 vueltas...
+C 0x4E70 - 1
+C 0x4E72 cero?
+C 0x4E73 no
+C 0x4E75 ...HL veces
+C 0x4E77 cero?
+C 0x4E78 no
+C 0x4E7A se recupera
+C 0x4E7B listo
+
+C 0x550A una fila arriba
+C 0x550F sigue la cabina?
+C 0x5513 la ultima de dentro
+C 0x5586 el scroll...
+C 0x558A ...para contar desde arriba del mapa
+C 0x558D filas de 32
+C 0x5598 las filas...
+C 0x5599 ...menos las 8 de encima
+C 0x559E listo
+C 0x5643 el resultado de esta fila...
+C 0x5644 ...a A'
+C 0x5648 las B filas
+C 0x564A Z: nada
+C 0x5687 es el agente?
+C 0x568B saltando?
+C 0x5691 el avance
+C 0x5695 hacia la izquierda
+C 0x56CC + 32
+C 0x56CD B filas
+C 0x56D2 listo
+C 0x5709 ya en el primero?
+C 0x570B si: B es su numero
+C 0x570D 10 bytes menos
+C 0x570F el anterior
+C 0x57C7 C...
+C 0x57C8 ...a las banderas: NZ si fuera
+C 0x57CC listo
+C 0x5823 el sprite de la cabeza...
+C 0x5827 ...o el de los pies del enemigo?
+C 0x582B el siguiente enemigo
+C 0x582C los 4
+C 0x5838 cero
+C 0x5839 Y
+C 0x583C X
+C 0x583F dibujo
+C 0x5842 color
+C 0x599C la escalera es de bajar?
+C 0x59A0 lo pulsado
+C 0x59A1 la X: mitad izquierda?
+C 0x5A4C la X del pie del tramo 4
+C 0x5A52 mira a la izquierda?
+C 0x5A58 la otra X
+C 0x5AB9 el paso
+C 0x5AC5 los pasos 5 y 6
+C 0x5ACB el 7
+C 0x5AD2 el dibujo...
+C 0x5AD4 ...a cero
+C 0x5AD8 los tres
+C 0x5ADA el scroll
+C 0x5B98 el paso...
+C 0x5B9B ...su X
+C 0x5B9C el primer sprite
+C 0x5B9F su Y
+C 0x5BA1 X
+C 0x5BA3 dibujo 4
+C 0x5BA6 color 6
+C 0x5BAA el segundo, 9 mas abajo
+C 0x5BB7 el tercero, 16 mas abajo
+C 0x5BBD dibujo 0x0C
+C 0x5BC0 color 6
+C 0x5BC2 listo
+C 0x5BE8 lo que quiere
+C 0x5BED nada: no
+C 0x5BF0 arriba: no
+C 0x5C7C su cuenta
+C 0x5C7F el tramo
+C 0x5C82 paso 0
+C 0x5C86 2 cuadros
+C 0x5CBD la planta
+C 0x5CBE de la 11...
+C 0x5CC2 ...a la 15
+C 0x5CC6 11: solo bajar
+C 0x5CCB 14?
+C 0x5CD1 12 y 13: bajar...
+C 0x5CD5 ...o subir
+C 0x5D30 el paso
+C 0x5D42 el 7
+C 0x5D44 el tramo
+C 0x5D45 subiendo?
+C 0x5D4A - 8
+C 0x5D50 la Y del sprite
+C 0x5D52 los pies, 24 mas abajo
+C 0x5D5A sin dibujo
+C 0x5D5C los dibujos sin piernas
+C 0x5DAE la X del paso
+C 0x5DB3 sus sprites
+C 0x5DB8 a que lado?
+C 0x5DBC los dibujos
+C 0x5DD0 el tramo
+C 0x5DD2 subiendo?
+C 0x5DD7 - 8
+C 0x5DDD la Y del sprite
+C 0x5DDF los pies, 24 mas abajo
+C 0x5DE6 la X del sprite
+C 0x5DE7 y la del enemigo
+C 0x5DEB segun el lado...
+C 0x5DEF ...el dibujo del cuerpo
+C 0x5DF9 la X del paso
+C 0x5DFF sus sprites
+C 0x5E04 el sexto?
+C 0x5E08 subiendo?
+C 0x5E0E - 8
+C 0x5E11 la Y
+C 0x5E13 los pies, 24 mas abajo
+C 0x5E1A X
+C 0x5E1F el cuerpo: dibujo 0x58
+C 0x5E23 el segundo sprite, 16 mas abajo
+C 0x5E29 las piernas: dibujo 0x5C
+C 0x5E2E de pie
+C 0x5E36 segun el lado...
+C 0x5E3B ...los dibujos del enemigo
+C 0x5F67 10 bytes
+C 0x5F6A el siguiente
+C 0x5F6D uno menos
+C 0x5F6E los 11
+C 0x5F71 listo
+C 0x6029 el ascensor...
+C 0x602F ...en IY
+C 0x6032 su Y + A
+C 0x6035 guardada
+C 0x603B listo
+C 0x603D (A + 8) x 32
+C 0x6040 + columna
+C 0x6046 + 0xC400
+C 0x604A en DE
+C 0x604C listo
+C 0x60D0 un tramo de hueco
+C 0x60D3 pintado
+C 0x60D6 las 6 filas
+C 0x60DA listo
+C 0x6278 sin otro bit?
+C 0x627B aplastado
+C 0x627F cuadro 1
+C 0x6283 en el suelo del ascensor?
+C 0x628D el cuadro
+C 0x6290 1 o 2?
+C 0x6294 3 o 4?
+C 0x6299 el 5: fuera
+C 0x62B4 se guarda
+C 0x62B7 el ascensor en IX
+C 0x62B9 una fila
+C 0x62BC el enemigo
+C 0x6420 cerrada, a la izquierda
+C 0x6423 el cuadro 6?
+C 0x6427 bit 5: sin dibujo?
+C 0x642D tiles 0
+C 0x64D6 la cuenta
+C 0x64D7 5 bytes
+C 0x64DA la siguiente
+C 0x64DC las 58
+C 0x64E1 volcar
+C 0x6566 de 1 a 20
+C 0x656B por debajo del umbral?
+C 0x656E Z: dispara
+C 0x6663 los pies
+C 0x6666 la columna de delante
+C 0x6669 el tile
+C 0x666C suelo?
+C 0x666F o la marca de puerta roja
+C 0x66F4 en un ascensor?
+C 0x66FA ya no
+C 0x66FE ni encima
+C 0x6702 el ascensor...
+C 0x6708 ...sin enemigo
+C 0x6718 una fila menos
+C 0x671B ya
+C 0x671D fila + 1
+C 0x671E lo que queda es la columna
+C 0x6721 fila x 8
+C 0x6727 columna x 8
+C 0x672D a HL
+C 0x6731 listo
+C 0x6744 la fila de la puerta
+C 0x6747 por encima?
+C 0x674A por debajo?
+C 0x6758 se guarda
+C 0x6759 5 bytes
+C 0x675C la siguiente
+C 0x675F las 58
+C 0x6761 NZ: ninguna
+C 0x6796 el tile, en DE
+C 0x6798 guardado...
+C 0x679B ...en +3/+4
+C 0x679F 5 bytes
+C 0x67A2 la siguiente
+C 0x67A4 hasta 58
+C 0x6815 su fila
+C 0x6818 su sitio en el mapa
+C 0x681B la puerta roja
+C 0x681F a la izquierda?
+C 0x6821 dos a la derecha
+C 0x6CB9 la tabla...
+C 0x6CBD el desplazamiento
+C 0x6CC1 + la Y
+C 0x6CC4 guardada
+C 0x6CC7 hacia la izquierda?
+C 0x6CCD 8 a la derecha
+C 0x6CDA las 3 del agente
+C 0x6CDE 3
+C 0x6CE0 temporizadores 0x0E-0x10
+C 0x6CE2 movidas
+C 0x6CE5 las 4 enemigas
+C 0x6CE9 4
+C 0x6CEB temporizadores 0x11-0x14
+C 0x6CED movidas
+C 0x6CF0 listo
+C 0x6E77 se guarda
+C 0x6E78 10 bytes
+C 0x6E7B la siguiente bala
+C 0x6E7F una menos
+C 0x6E80 las C
+C 0x6E82 E: 1 si alguna dio
+C 0x6E83 NZ si dio
+C 0x6E87 listo
+C 0x6F10 la cifra
+C 0x6F13 una menos
+C 0x6F14 acabadas: los acarreos
+C 0x6F16 la siguiente cifra a sumar
+C 0x6F17 la cifra de la izquierda
+C 0x6F42 la cuenta de 0xC0D4
+C 0x6F4B listo
+C 0x6F6B / 2
+C 0x6F6F A - 1
+C 0x6F70 mayor?
+C 0x6F73 la diferencia...
+C 0x6F76 ...a B
+C 0x6F78 cuanto?
+C 0x6F7A nada
+C 0x6F7C + B
+C 0x6F80 guardada
+C 0x6F87 la cifra...
+C 0x6F88 ...de ASCII a numero
+C 0x6F8D DE = x 2
+C 0x6F8F x 4
+C 0x6F90 x 8
+C 0x6F91 x 10
+C 0x6F95 + la cifra
+C 0x6FCD la cifra
+C 0x6FCE "0"?
+C 0x6FD0 no: el resto tal cual
+C 0x6FD2 un espacio
+C 0x6FD6 las B
+C 0x70B6 las decenas...
+C 0x70B7 ...en ASCII
+C 0x70BC las unidades...
+C 0x70BD ...en ASCII
+C 0x7126 el largo
+C 0x712B cero?
+C 0x712C si: nada
+C 0x712D copiados
+C 0x712F listo
+C 0x7156 se recuperan
+C 0x7159 + n en el destino
+C 0x715B el byte siguiente
+C 0x715C el codigo siguiente
+C 0x715E sigue
+C 0x7210 la cuenta
+C 0x7211 un paso
+C 0x7214 registro 6 = 5: dados la vuelta
+C 0x721A 4 cuadros
+C 0x721F registro 6 = 4
+C 0x7225 la cuenta
+C 0x7226 los 10
+C 0x722E los dibujos de caer
+C 0x723A 8 cuadros
+C 0x723D el primer sprite
+C 0x7241 8 mas abajo
+C 0x7243 llega a 0x70?
+C 0x7247 su Y
+C 0x7248 el segundo...
+C 0x724A ...un pixel por debajo
+C 0x724B otra vez
+C 0x7287 un tile del cable...
+C 0x728A ...y el de al lado, a cero
+C 0x728B la fila siguiente
+C 0x728C las 3
+C 0x7292 volcar
+C 0x7298 ...a 0x2680
+C 0x72BD Y + 1
+C 0x72C2 X + 4
+C 0x72C6 el siguiente
+C 0x72C7 los B
+C 0x72C9 listo
+C 0x72DD el temporizador 0
+C 0x72E1 espera
+C 0x72E6 sin volcar
+C 0x72E8 listo
+C 0x75D7 se recupera todo
+C 0x75DE listo
+C 0x75DF se guarda
+C 0x75E0 A...
+C 0x75E3 ...x 2
+C 0x75E5 la entrada
+C 0x75E6 el puntero
+C 0x75E9 en HL
+C 0x75EB listo
+C 0x7613 los pedidos
+C 0x7614 el bit del canal B
+C 0x7617 no
+C 0x7619 su lista
+C 0x761F canal 1
+C 0x7621 la primera nota
+C 0x7624 a escribir todo
+C 0x7629 los pedidos
+C 0x762A el bit del canal C
+C 0x762C no
+C 0x762E su lista
+C 0x7634 canal 2
+C 0x7636 la primera nota
+C 0x7639 a escribir todo
+C 0x7645 lo que suena
+C 0x7648 su prioridad
+C 0x7649 nada?
+C 0x764A si: entra
+C 0x764C - 1
+C 0x764D contra la nueva
+C 0x7650 menor la nueva: no
+C 0x769D que hay que escribir?
+C 0x76A0 1: solo el tono
+C 0x76A4 3: tono y volumen del canal A
+C 0x76A8 los volumenes...
+C 0x76AA ...del registro 9...
+C 0x76AD WRTPSG
+C 0x76B1 ...y el 10
+C 0x76B3 WRTPSG
+C 0x76BD se guardan
+C 0x76C0 lo que habia que escribir
+C 0x76C4 nada mientras
+C 0x76C8 el canal
+C 0x76D0 el canal B
+C 0x76D8 el canal C
+C 0x7773 la ficha del canal
+C 0x7776 los bits de E/S...
+C 0x7779 ...y todo apagado
+C 0x777C se guarda
+C 0x777E 10 bytes
+C 0x7785 el mezclador del canal
+C 0x7788 x 2
+C 0x778B su tono a cero
+C 0x77A2 algun volumen?
+C 0x77A4 los tres
+C 0x77A6 si
+C 0x77A7 algun canal suena
+C 0x77AC 3 bytes
+C 0x77AF la peticion a cero
+C 0x77B3 los volumenes...
+C 0x77B6 ...a cero
+C 0x77B9 el registro 7...
+C 0x77C3 ...con todo apagado
+C 0x781C el canal
+C 0x781D el siguiente
+C 0x7820 los tres?
+C 0x7823 10 bytes
+C 0x7826 la ficha siguiente
+C 0x7828 otro
+C 0x782B la nota que suena...
+C 0x7832 ...9 bytes despues
+C 0x786C una vuelta mas
+C 0x786F cuantas
+C 0x7872 acabadas?
+C 0x7877 el puntero...
+C 0x787B ...del tramo
+C 0x787C sigue alli
+C 0x787F la cuenta a cero
+C 0x7882 tras la orden
+C 0x7885 sigue
+C 0x7887 el vibrato...
+C 0x788A ...cuanto
+C 0x788F el canal x 2
+C 0x7891 su tono
+C 0x7893 el valor
+C 0x7897 sube o baja?
+C 0x789D sube
+C 0x78A2 el tono nuevo
+C 0x78A4 guardado
+C 0x78A8 el canal
+C 0x78AA ya hay que escribir?
+C 0x78AF 1: solo el tono
+C 0x78B4 listo
+C 0x78B5 el mezclador del canal A
+C 0x78B9 el del B
+C 0x78BD el del C
+C 0x78C0 juntos
+C 0x78C5 los bits de E/S
+C 0x78C9 el registro 7
+C 0x78CC listo
+C 0x794C la cuenta
+C 0x794D 4 bytes
+C 0x794F hacia atras
+C 0x7952 uno menos
+C 0x7955 al sprite anterior
+C 0x7956 otro
+C 0x7981 registro 1 = 0xC2: sin interrupcion
+C 0x798A a 0x2100
+C 0x798D 256 bytes
+C 0x7992 LDIRVM
+C 0x7997 y a 0x2900
+C 0x799A LDIRVM
+C 0x799D imagen e interrupcion
+C 0x79A7 el paso
+C 0x79AB x 2
+C 0x79AE el puntero
+C 0x79B2 en el sotano
+C 0x79B7 su ancho
+C 0x79B8 3 filas
+C 0x79BA mezclado con el sotano
+C 0x7B13 Y
+C 0x7B16 a su sprite
+C 0x7B1A X
+C 0x7B1D a su sprite
+C 0x7B1E el siguiente
+C 0x7B21 los 5
+C 0x7B5C - 8
+C 0x7B5F guardada
+C 0x7B60 el siguiente
+C 0x7B61 los 5
+C 0x7B66 volcar
+C 0x7B8D el siguiente
+C 0x7B8F la fila
+C 0x7B92 + 32
+C 0x7B9C una fila menos
+C 0x7B9D queda la ultima?
+C 0x7BA1 la ultima tal cual
+C 0x7BA5 las B
+C 0x7BA7 listo
+C 0x7BB0 en la tabla normal
+C 0x7BB3 2 bytes
+C 0x7BB9 LDIRVM
+C 0x7BC1 y en la dada la vuelta
+C 0x7BC4 LDIRVM
+C 0x7BC7 interrupciones
+C 0x7E13 Y
+C 0x7E16 X
+C 0x7E19 dibujo 0xD8
+C 0x7E1D color 9
+C 0x7E21 el otro sprite, en el mismo sitio
+C 0x7E27 dibujo 0xD0
+C 0x7E2B color 0x0D
+C 0x7E31 pedido
+C 0x7E34 el paso siguiente
+C 0x7E36 temporizador 0x1F...
+C 0x7E38 ...16 cuadros
+C 0x7E3D de que lado
+C 0x7E43 X 0x48
+C 0x7EF9 6 filas mas abajo
+C 0x7EFA las decenas
+C 0x7EFC las unidades
+C 0x7EFD una menos
+C 0x7EFE las 9
+C 0x7F01 la decena siguiente
+C 0x7F08 cuantas veces
+C 0x7F09 fin?
+C 0x7F0D en C
+C 0x7F0F la lista
+C 0x7F12 la cuenta
+C 0x7F14 la pieza
+C 0x7F1A puesta
+C 0x7F1F las B
+C 0x7F22 5 filas mas abajo
+C 0x7F38 la pieza de suelo
+C 0x7F3B puesta
+C 0x7F3E las 32
+C 0x7F40 5 filas mas abajo
+C 0x7F45 listo
+C 0x7F46 se guarda
+C 0x7F47 la tira
+C 0x7F4B el ancho...
+C 0x7F4E ...se suma a DE
+C 0x7F50 listo
+C 0x7F52 el ancho
+C 0x7F53 nada?
+C 0x7F57 en BC
+C 0x7F5C el ancho
+C 0x7F5D una fila
+C 0x7F60 + 32...
+C 0x7F66 ...- el ancho
+C 0x7F69 otra?
+C 0x7F6C si

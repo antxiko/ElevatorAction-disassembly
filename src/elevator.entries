@@ -1,0 +1,11 @@
+# Puntos de entrada que el trazado NO puede deducir solo.
+#
+# Cada uno lleva escrito POR QUE hace falta.
+
+# El arranque: la cabecera da INIT en 0x4010.
+0x4010   # INIT
+
+# La interrupcion: el arranque pone "jp 0x4C92" en H.TIMI (0x4945-0x494D).
+0x4C92   # interrupcion
+# La otra interrupcion: 0x4C92 se cambia a si misma por "jp 0x4C26" en H.TIMI (0x4D14-0x4D1C).
+0x4C26   # interrupcion de la partida
