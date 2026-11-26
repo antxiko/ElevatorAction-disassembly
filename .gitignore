@@ -31,3 +31,6 @@ __pycache__/
 *.pyc
 .forja/
 *.omr
+
+# La musica sale de ejecutar la ROM (make musica) y no se publica
+docs/audio/

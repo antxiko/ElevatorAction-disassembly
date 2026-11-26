@@ -1,0 +1,98 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elevator Action - commented disassembly</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<header class="top">
+  <img src="data:image/png;base64,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" alt="Elevator Action">
+  <p class="claim">A spy works his way down a thirty-storey building, from the roof to the car in the basement, picking up the documents behind the red doors and dodging the agents who come out of the blue ones. The building comes from running the ROM, checked against openMSX tile by tile; the music, from its own sound engine.</p>
+  <p class="ficha">Taito - <b>(c) 1985</b> - <b>32 KB</b> cartridge (header at 0x4000) - <b>MSX</b> - Dump <b>6cbddd11...</b></p>
+</header>
+<p class="ficha" style="border:1px solid var(--oro);padding:.8em 1em;margin:1.5em 0">
+<b>There are no screenshots of the game here.</b> The building comes from <b>running the ROM</b> on a Z80 written in Python and <b>our own code paints it</b>; it has been checked against openMSX's RAM.</p>
+<nav><a href="THE-GAME.html">The game</a><a href="THE-BUILDING.html">The building</a><a href="THE-SPRITES.html">The sprites</a><a href="THE-TEXTS.html">The texts</a><a href="THE-MUSIC.html">The music</a><span style="opacity:.35">|</span><a href="CURIOSITIES.html">Curiosities</a><a href="SECRETS-AND-BUGS.html">Secrets and bugs</a><span style="opacity:.35">|</span><a href="UNDER-THE-HOOD.html">Under the hood</a><a href="es/" style="margin-left:auto;color:var(--oro)">En castellano</a></nav>
+<section id="numbers">
+  <h2>The cartridge in numbers</h2>
+  <div class="cifras"><div class="cifra"><b>100%</b><span>of the binary explained</span></div><div class="cifra"><b>857</b><span>routines and labels</span></div><div class="cifra"><b>49.9%</b><span>of the listing commented</span></div><div class="cifra"><b>13,361</b><span>bytes of code</span></div><div class="cifra"><b>19,407</b><span>bytes of data</span></div><div class="cifra"><b>0</b><span>bytes unidentified</span></div></div>
+</section>
+<section id="pages"><h2>What is inside</h2><div class="hall"><h3>The game</h3><ul><li><a href="THE-GAME.html">The game</a>: the controls, the rounds, the doors, the lifts, the escalators, the points and the ways to die.</li><li><a href="THE-BUILDING.html">The building</a>: the thirty floors and the basement, run from the ROM; the eleven lifts and the 58 doors.</li><li><a href="THE-SPRITES.html">The sprites</a>: every drawing, who puts it on screen and in which pose.</li><li><a href="THE-TEXTS.html">The texts</a>: every text in the ROM.</li><li><a href="THE-MUSIC.html">The music</a>: the tune and the jingles, from its own sound engine.</li></ul></div><div class="hall"><h3>Curiosities</h3><ul><li><a href="CURIOSITIES.html">Curiosities</a>: a copy of an MSX's memory inside the cartridge, the rush hour, the red doors drawn by lot.</li><li><a href="SECRETS-AND-BUGS.html">Secrets and bugs</a>: code nobody calls, a counter nobody reads and a copy that goes too far.</li></ul></div><div class="hall"><h3>Under the hood</h3><ul><li><a href="UNDER-THE-HOOD.html">Under the hood</a>: rebuilding the ROM, the cartridge, the BIOS it uses, the loop, the RAM and the tools.</li></ul></div></section>
+<footer><p>This is documentation and preservation work: the code and artwork still belong to their authors and to Taito, and the cartridge image is not distributed.</p></footer>

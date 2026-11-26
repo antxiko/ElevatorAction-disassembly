@@ -1,24 +1,19 @@
 # mapa.tcl - la ronda 1 montada, para cotejar el mapa del edificio. Sacado del listado:
-# el titulo solo lee la barra (titulo_lee_disparo, 0x4B1E) cuando ya parpadea "PUSH SPACE KEY": el bit 2 de 0xC357.
-# Se mira cada medio segundo y entonces se pulsa. El volcado se hace al pasar por 0x42A5 (monta_ronda, justo
-# antes de agente_entra): el edificio, los ascensores, las puertas rojas y el cable ya estan en el mapa.
-# Se vuelca la RAM 0xC000-0xDFFF y la VRAM entera, y se sale.
+# el titulo solo lee la barra en titulo_lee_disparo (0x4B1E), cuando ya parpadea "PUSH SPACE KEY". La barra se
+# baja la primera vez que el Z80 pasa por ahi y se suelta en titulo_fin (0x4B59). El volcado se hace al pasar
+# por 0x42A5 (monta_ronda, justo antes de agente_entra): el edificio, los ascensores, las puertas rojas y el
+# cable ya estan en el mapa. Se vuelca la RAM 0xC000-0xDFFF y la VRAM entera, y se sale.
 set throttle off
-set ::pulsada 0
 set ::log [open "$::env(SALIDA).log" w]
 proc apunta {t} { puts $::log "[machine_info time] $t"; flush $::log }
-proc mira {} {
-    apunta "C357=[peek 0xC357] C0D6=[peek 0xC0D6] PC=[reg PC]"
-    if {!$::pulsada && ([peek 0xC357] & 0x04)} {
-        set ::pulsada 1
-        apunta pulsa
-        keymatrixdown 8 0x01
-        after time 0.3 { keymatrixup 8 0x01 }
-        return
-    }
-    after time 0.5 mira
+set ::pulsada 0
+proc pulsa {} {
+    if {$::pulsada} return
+    set ::pulsada 1
+    apunta "pulsa en [format %04X [reg PC]]"
+    keymatrixdown 8 0x01
 }
-after time 1 mira
+proc suelta {} { apunta suelta; keymatrixup 8 0x01 }
 proc vuelca {} {
     apunta vuelca
     set f [open $::env(SALIDA) wb]
@@ -27,5 +22,7 @@ proc vuelca {} {
     close $f
     exit
 }
+debug set_bp 0x4B1E {} pulsa
+debug set_bp 0x4B59 {} suelta
 debug set_bp 0x42A5 {} vuelca
 after time 120 { apunta tiempo; exit }

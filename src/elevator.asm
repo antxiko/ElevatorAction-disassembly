@@ -1269,7 +1269,7 @@ titulo:		; Titulo animado en SCREEN 2 hasta que se pulsa el disparo
 	ld bc,00008h		;49bd   ; 8
 	ld a,001h		;49c0   ; postura 1
 	call rellena_bc		;49c2   ; todas
-	ld hl,0949ah		;49c5   ; "(C) TAITO 1985"...
+	ld hl,0949ah		;49c5   ; "(C) TAITO CORP.1985"...
 	ld de,0c6e7h		;49c8   ; ...en el mapa
 	ld bc,00011h		;49cb   ; 17 bytes
 	ldir		;49ce   ; copiados
@@ -6694,8 +6694,8 @@ cable_quita_fila:
 	ld hl,0c0d0h		;728f
 	set 7,(hl)		;7292   ; volcar
 	di			;7294
-	ld hl,0925ch		;7295   ; los dibujos normales...
-	ld de,02680h		;7298   ; ...a 0x2680
+	ld hl,0925ch		;7295   ; FALLO: los dibujos de la lampara desde 0x925C, dos bytes antes de los buenos (0x925E: el bloque de 0x921C lleva delante su largo)...
+	ld de,02680h		;7298   ; ...a 0x2680: en la ronda 1 la lampara sale corrida
 	ld bc,00060h		;729b
 	push hl			;729e
 	push bc			;729f
@@ -8455,9 +8455,11 @@ DATA_sprites_resto:
 	defb 000h,000h,000h,000h,0b0h,0b0h,0f0h,0fch,080h,080h,000h,000h,000h,000h,000h,000h	; 924c  ................
 
 ; ----------------------------------------------------------------------
-; DATOS sprites_agente_2: Los del agente que tapa la entrada por el cable
+; DATOS sprites_resto_d: Mas dibujos del bloque de 0x921C (0x925C es donde la
+;   entrada por el cable cree que empiezan los de la lampara: dos bytes antes
+;   de los buenos)
 ;   0x925c..0x949a  (574 bytes)
-DATA_sprites_agente_2:
+DATA_sprites_resto_d:
 	defb 000h,000h,000h,000h,000h,000h,000h,000h,03ch,03ch,000h,000h,000h,000h,000h,000h	; 925c  ........<<......
 	defb 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 926c  ................
 	defb 000h,000h,010h,008h,010h,020h,010h,010h,000h,000h,0ffh,07eh,03ch,000h,000h,000h	; 927c  ..... .....~<...
@@ -8496,14 +8498,15 @@ DATA_sprites_agente_2:
 	defb 097h,000h,098h,09fh,099h,09ah,09fh,000h,09bh,09ch,09dh,000h,09eh,000h	; 948c  ..............
 
 ; ----------------------------------------------------------------------
-; DATOS txt_taito: "(C) TAITO 1985" del titulo
+; DATOS txt_taito: "(C) TAITO CORP.1985" del titulo, con los tiles de letras
+;   del titulo (0xAC es la (C), 0xAD la A, 0xA0 el 0)
 ;   0x949a..0x94ab  (17 bytes)
 DATA_txt_taito:
 	defb 0ach,000h,0c0h,0adh,0b5h,0c0h,0bbh,000h,0afh,0bbh,0beh,0bch,0aah,0a1h,0a9h,0a8h	; 949a  ................
 	defb 0a5h	; 94aa
 
 ; ----------------------------------------------------------------------
-; DATOS txt_pulsa: "PUSH SPACE KEY"
+; DATOS txt_pulsa: "PUSH SPACE KEY", con los mismos tiles
 ;   0x94ab..0x94b9  (14 bytes)
 DATA_txt_pulsa:
 	defb 0bch,0c1h,0bfh,0b4h,000h,0bfh,0bch,0adh,0afh,0b1h,000h,0b7h,0b1h,0c5h	; 94ab  ..............

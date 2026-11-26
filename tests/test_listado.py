@@ -156,6 +156,22 @@ class Sonido(unittest.TestCase):
         self.assertEqual(w(0x9AF2), 0)
 
 
+class LosFallos(unittest.TestCase):
+    def test_la_lampara_se_repone_dos_bytes_antes(self):
+        rom = lee()
+        self.assertEqual(w(0x921C), 0x01C0)                  # el bloque lleva su largo delante
+        self.assertEqual(instruccion(0x7295), "ld hl,0925ch")  # y el cable repone desde aqui
+        self.assertNotEqual(bytes(rom[0x925C - ORG:0x925C - ORG + 0x60]),
+                            bytes(rom[0x925E - ORG:0x925E - ORG + 0x60]))
+
+    def test_la_cuenta_de_0xc0d4_no_la_lee_nadie(self):
+        lineas = [l for l in open(ASM, encoding="utf-8") if "0c0d4h" in l]
+        self.assertEqual(len(lineas), 4)                     # la pone a cero y la cuenta, y nada mas
+
+    def test_la_copia_de_0x9c0_bytes(self):
+        self.assertEqual(instruccion(0x474E), "ld bc,009c0h")
+
+
 class LosRestos(unittest.TestCase):
     def test_copia_de_la_ram(self):
         rom = lee()

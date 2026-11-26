@@ -397,7 +397,7 @@ C 0x4993 los colores
 C 0x499C a los tres tercios
 C 0x49AE los sprites del titulo
 C 0x49BA las 8 letras en su primera postura
-C 0x49C5 "(C) TAITO 1985"...
+C 0x49C5 "(C) TAITO CORP.1985"...
 C 0x49C8 ...en el mapa
 C 0x49D0 bit 0: el titulo en marcha
 C 0x49D5 cada 5 cuadros
@@ -1924,7 +1924,7 @@ C 0x726D dado la vuelta...
 C 0x7273 ...24 cuadros
 C 0x7278 normal
 L 0x7287 cable_quita_fila
-C 0x7295 los dibujos normales...
+C 0x7295 FALLO: los dibujos de la lampara desde 0x925C, dos bytes antes de los buenos (0x925E: el bloque de 0x921C lleva delante su largo)...
 C 0x72AC 16 cuadros
 L 0x72B2 cable_desliza             Seis cuadros y los B sprites 1 abajo y 4 a la derecha
 L 0x72BD cable_desliza_uno
@@ -2194,9 +2194,9 @@ D 0x8D78 0x8D98 colores_oscuras   Los de la luz apagada
 D 0x8D98 0x905A sprites_agente    Los sprites del agente (largo y bytes)
 D 0x905A 0x921C sprites_enemigo   Los del enemigo
 D 0x921C 0x925C sprites_resto     Balas, lampara y lo demas
-D 0x925C 0x949A sprites_agente_2  Los del agente que tapa la entrada por el cable
-D 0x949A 0x94AB txt_taito         "(C) TAITO 1985" del titulo
-D 0x94AB 0x94B9 txt_pulsa         "PUSH SPACE KEY"
+D 0x925C 0x949A sprites_resto_d   Mas dibujos del bloque de 0x921C (0x925C es donde la entrada por el cable cree que empiezan los de la lampara: dos bytes antes de los buenos)
+D 0x949A 0x94AB txt_taito         "(C) TAITO CORP.1985" del titulo, con los tiles de letras del titulo (0xAC es la (C), 0xAD la A, 0xA0 el 0)
+D 0x94AB 0x94B9 txt_pulsa         "PUSH SPACE KEY", con los mismos tiles
 D 0x94B9 0x993E titulo_patrones   Los patrones del titulo, comprimidos
 D 0x993E 0x99AF titulo_colores    Sus colores, comprimidos
 D 0x99AF 0x9A8F titulo_sprites_d  Los dibujos de los sprites del titulo
@@ -3902,7 +3902,7 @@ C 0x728A ...y el de al lado, a cero
 C 0x728B la fila siguiente
 C 0x728C las 3
 C 0x7292 volcar
-C 0x7298 ...a 0x2680
+C 0x7298 ...a 0x2680: en la ronda 1 la lampara sale corrida
 C 0x72BD Y + 1
 C 0x72C2 X + 4
 C 0x72C6 el siguiente
